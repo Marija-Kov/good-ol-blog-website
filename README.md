@@ -1,2 +1,3 @@
-# blog-website
+## Blog website
+
  A CRUD app built with NodeJS, MongoDB and EJS.

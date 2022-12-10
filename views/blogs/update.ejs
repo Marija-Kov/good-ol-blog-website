@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs') %>
+<body>
+
+<%- include('../partials/nav.ejs') %>
+<!-- BLOG IS NOT DEFINED.*** SUCCESSFULLY RESOLVED *** -->
+    <div class="create-blog content">
+        <form>
+            <label for="title">Blog title:</label>
+            <input type="text" id="title" name="title" value="<%= blog.title %>" required>
+            <label for="snippet">Blog snippet:</label>
+            <input type="text" id="snippet" name="snippet" value="<%= blog.snippet %>" required>
+            <label for="body">Blog body:</label>
+            <textarea id="body" name="body" required><%= blog.body %></textarea>
+            <button class="save-btn" data-doc="<%= blog._id %>">Save</button>
+        </form>
+        
+    </div>
+<%- include('../partials/foot.ejs') %>
+
+<script>
+    const saveBtn = document.querySelector('.save-btn');
+    const blogTitle = document.querySelector('#title');
+    const blogSnippet = document.querySelector('#snippet');
+    const blogBody = document.querySelector('#body');
+    saveBtn.addEventListener('click', e => {
+      e.preventDefault();
+     const endpoint = `/blogs/${saveBtn.dataset.doc}`;
+     fetch(endpoint, {
+         method: 'PATCH',
+         body: JSON.stringify({
+        _id: saveBtn.dataset.doc,
+        title: blogTitle.value, 
+        snippet: blogSnippet.value,
+        body: blogBody.value}),
+        headers: {
+            'Content-type': 'application/json; charset=UTF-8'
+        }
+     })
+      .then(response => response.json())
+      .then(() => window.location.href = `/blogs/${saveBtn.dataset.doc}`)
+      .catch(err => console.log(err))
+      //  console.log(blog)
+    
+        // you have a blog object with new data and you have the blog post id
+        // how can you use them to update the blog post?
+    })
+
+</script>
+</body>
+
+</html>

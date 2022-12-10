@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="en">
+<%- include('../partials/head.ejs') %>
+<body>
+
+<%- include('../partials/nav.ejs') %>
+
+<div class="details content">
+<h2><%= blog.title %></h2>
+<div class="content">
+    <p><%= blog.body %></p>
+<a class="delete" data-doc="<%= blog._id %>">delete</a>    
+<a class="edit" data-doc="<%= blog._id %>" href= "/blogs/update/<%= blog._id %>">edit</a>  
+</div>
+
+</div>
+
+    <%- include('../partials/foot.ejs') %>
+
+    <script>
+     const trashcan = document.querySelector('a.delete');
+
+     trashcan.addEventListener('click', e => {
+         const endpoint = `/blogs/${trashcan.dataset.doc}`;
+
+         fetch(endpoint, {   //AJAX request - front end only - meaning you can't use redirect in NodeJS, but send text data back to the browser
+             method: 'DELETE'
+         })
+         .then((response)=> response.json()) // parsing json to js object, duh
+         .then(data => window.location.href = data.redirect)
+         .catch(err => {
+           console.log(`Error: ${err}`)
+          });
+      }); 
+
+    </script>
+  </body>
+</html>
