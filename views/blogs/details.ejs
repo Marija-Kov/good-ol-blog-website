@@ -23,10 +23,10 @@
      trashcan.addEventListener('click', e => {
          const endpoint = `/blogs/${trashcan.dataset.doc}`;
 
-         fetch(endpoint, {   //AJAX request - front end only - meaning you can't use redirect in NodeJS, but send text data back to the browser
+         fetch(endpoint, {  
              method: 'DELETE'
          })
-         .then((response)=> response.json()) // parsing json to js object, duh
+         .then((response)=> response.json()) 
          .then(data => window.location.href = data.redirect)
          .catch(err => {
            console.log(`Error: ${err}`)

@@ -4,7 +4,6 @@
 <body>
 
 <%- include('../partials/nav.ejs') %>
-<!-- BLOG IS NOT DEFINED.*** SUCCESSFULLY RESOLVED *** -->
     <div class="create-blog content">
         <form>
             <label for="title">Blog title:</label>
@@ -41,10 +40,6 @@
       .then(response => response.json())
       .then(() => window.location.href = `/blogs/${saveBtn.dataset.doc}`)
       .catch(err => console.log(err))
-      //  console.log(blog)
-    
-        // you have a blog object with new data and you have the blog post id
-        // how can you use them to update the blog post?
     })
 
 </script>
