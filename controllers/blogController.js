@@ -4,7 +4,9 @@ const blog_index = (req, res) => {
   Blog.find()
     .sort({ createdAt: -1 })
     .then(result => {
-      res.render("blogs/index", { title: "All Blogs", blogs: result });
+      res
+        //.send(result) // <-- uncomment this for testing and comment every other method out 
+        .render("blogs/index", { title: "All Blogs", blogs: result })
     })
     .catch(err => {
       console.log(`Error: ${err}`);
@@ -15,7 +17,9 @@ const blog_details = (req, res) => {
    const id = req.params.id;
    Blog.findById(id)
      .then(result => {
-       res.render("blogs/details", { blog: result, title: "Blog Details" });
+       res
+       //.send(result)
+       .render("blogs/details", { blog: result, title: "Blog Details" });
      })
      .catch(err => {
        res.status(404).render("404", { title: "Error" });
@@ -33,7 +37,9 @@ const blog_create_post = (req, res) => {
   blog
     .save()
     .then(result => {
-      res.redirect("/blogs");
+      res
+      //.send(result)
+      .redirect("/blogs");
     })
     .catch((err) => {
       console.log(`Error: ${err}`);
@@ -44,7 +50,9 @@ const blog_delete = (req, res) => {
 const id = req.params.id;
 Blog.findByIdAndDelete(id)
   .then(result => {
-    res.json({ redirect: "/blogs" }); 
+    res
+    //.send(result)
+    .json({ redirect: "/blogs" }); 
   })
   .catch((err) => {
     console.log(`Error: ${err}`);
@@ -66,14 +74,15 @@ const blog_update_patch = (req, res) => {
 const id = req.params.id;
 Blog.findOneAndUpdate({_id: id}, req.body, {new: true, runValidators: true})
 .then(result => {
-  res.json({ redirect: `/blogs/${id}`})
+  res
+  //.send(result)
+  .json({ redirect: `/blogs/${id}`})
 })
 .catch(err => {
        res.status(404).render("404", { title: "Error" });
      }); 
 
 };
-
 
 
 module.exports = {
