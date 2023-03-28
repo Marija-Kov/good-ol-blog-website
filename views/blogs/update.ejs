@@ -39,7 +39,7 @@
      })
       .then(response => response.json())
       .then(() => window.location.href = `/blogs/${saveBtn.dataset.doc}`)
-      .catch(err => console.log(err))
+      .catch(error=> console.log(error))
     })
 
 </script>
