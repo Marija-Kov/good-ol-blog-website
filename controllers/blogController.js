@@ -6,10 +6,12 @@ const blog_index = (req, res) => {
     .then(result => {
       res
         //.send(result) // <-- uncomment this for testing and comment every other method out 
-        .render("blogs/index", { title: "All Blogs", blogs: result })
+          .status(200)
+          .render("blogs/index", { title: "All Blogs", blogs: result });
     })
-    .catch(err => {
-      console.log(`Error: ${err}`);
+    .catch(error=> {
+      res.status(400).json({ error: err.message });
+      console.log(`Error: ${error}`);
     });
 };
    
@@ -18,16 +20,17 @@ const blog_details = (req, res) => {
    Blog.findById(id)
      .then(result => {
        res
-       //.send(result)
-       .render("blogs/details", { blog: result, title: "Blog Details" });
+         //.send(result)
+         .status(200)
+         .render("blogs/details", { blog: result, title: "Blog Details" });
      })
-     .catch(err => {
-       res.status(404).render("404", { title: "Error" });
+     .catch(error=> {
+       res.status(404).render("404", { title: "Page Not Found", message: err.message });
      }); 
 };
 
 const blog_create_get = (req, res) => {
- res.render("blogs/create", { title: "Create" });
+  res.status(200).render("blogs/create", { title: "Create" });
 
 };
 
@@ -38,50 +41,61 @@ const blog_create_post = (req, res) => {
     .save()
     .then(result => {
       res
-      //.send(result)
-      .redirect("/blogs");
+        //.send(result)
+        .status(200)
+        .redirect("/blogs");
     })
-    .catch((err) => {
-      console.log(`Error: ${err}`);
+    .catch((error)=> {
+      res.status(400).json({ error: err.message });
+      console.log(`Error: ${error}`);
     });
 };
 
 const blog_delete = (req, res) => {
-const id = req.params.id;
-Blog.findByIdAndDelete(id)
-  .then(result => {
-    res
-    //.send(result)
-    .json({ redirect: "/blogs" }); 
-  })
-  .catch((err) => {
-    console.log(`Error: ${err}`);
-  });
+  const id = req.params.id;
+  Blog.findByIdAndDelete(id)
+    .then((result) => {
+      res
+        //.send(result)
+        .status(200)
+        .json({ redirect: "/blogs" });
+    })
+    .catch((error)=> {
+      res.status(400).json({ error: err.message });
+      console.log(`Error: ${error}`);
+    });
 };
 
 const blog_update_get = (req, res) => { 
   const id = req.params.id;
   Blog.findById(id)
      .then(result => {  
-       res.render("blogs/update", { blog: result, title: "Update Blog" });
+       res
+         .status(200)
+         .render("blogs/update", { blog: result, title: "Update Blog" });
      })
-     .catch(err => {
-       res.status(404).render("404", { title: "Error" });
+     .catch(error=> {
+       res
+         .status(404)
+         .render("404", { title: "Page Not Found", message: err.message });
      }); 
 };
 
 const blog_update_patch = (req, res) => {
-const id = req.params.id;
-Blog.findOneAndUpdate({_id: id}, req.body, {new: true, runValidators: true})
-.then(result => {
-  res
-  //.send(result)
-  .json({ redirect: `/blogs/${id}`})
-})
-.catch(err => {
-       res.status(404).render("404", { title: "Error" });
-     }); 
-
+  const id = req.params.id;
+  Blog.findOneAndUpdate({ _id: id }, req.body, {
+    new: true,
+    runValidators: true,
+  })
+    .then((result) => {
+      res
+        //.send(result)
+        .status(200)
+        .json({ redirect: `/blogs/${id}` });
+    })
+    .catch((error)=> {
+      res.status(400).json({ error: err.message });
+    });
 };
 
 
