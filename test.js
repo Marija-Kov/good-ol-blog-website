@@ -10,11 +10,11 @@ chai.use(chaiHttp);
 
 //clean up the DB before and after testing in the name of good practice
 // before((done) => {
-//      Blog.deleteMany({}, function(err) {})
+//      Blog.deleteMany({}, function(error){})
 //      done()
 // });
 // after((done)=> {
-//     Blog.deleteMany({}, function (err) {});
+//     Blog.deleteMany({}, function (error){});
 //     done();
 // })
 
