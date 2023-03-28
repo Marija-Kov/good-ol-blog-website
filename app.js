@@ -2,6 +2,7 @@ const express = require('express');
 const morgan = require('morgan');
 const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
+const userRoutes = require("./routes/userRoutes");
 const app = express();
 require('dotenv').config(); 
 
@@ -32,6 +33,7 @@ app.get("/login", (req, res) => {
 });
 
 app.use('/blogs', blogRoutes);
+app.use("/user", userRoutes);
 
 app.use((req, res) => { 
     res.status(404).render("404", { title: "Error" });
