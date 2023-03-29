@@ -4,14 +4,13 @@ const blog_index = (req, res) => {
   Blog.find()
     .sort({ createdAt: -1 })
     .then(result => {
-      res
-        //.send(result) // <-- uncomment this for testing and comment every other method out 
-          .status(200)
-          .render("blogs/index", { title: "All Blogs", blogs: result });
+      res  
+         .status(200)
+         .render("blogs/index", { title: "All Blogs", blogs: result })
     })
     .catch(error=> {
-      res.status(400).json({ error: err.message });
-      console.log(`Error: ${error}`);
+      res.status(400).json({ error: error.message });
+      console.log(`Error: ${error.message}`);
     });
 };
    
@@ -20,34 +19,38 @@ const blog_details = (req, res) => {
    Blog.findById(id)
      .then(result => {
        res
-         //.send(result)
          .status(200)
          .render("blogs/details", { blog: result, title: "Blog Details" });
      })
      .catch(error=> {
-       res.status(404).render("404", { title: "Page Not Found", message: err.message });
+       res.status(404).render("404", { title: "Page Not Found", message: error.message });
      }); 
 };
 
 const blog_create_get = (req, res) => {
+ try {
   res.status(200).render("blogs/create", { title: "Create" });
-
+ } catch (error) {
+  res.json({error: error.message})
+ }
+  
 };
 
 const blog_create_post = (req, res) => {
   const blog = new Blog(req.body);
+  if(!req.body.title || !req.body.snippet || !req.body.body){
+    return res.status(400).json({error: "Invalid blog input"})
+  }
   const id = req.params.id;
   blog
     .save()
     .then(result => {
       res
-        //.send(result)
         .status(200)
         .redirect("/blogs");
     })
     .catch((error)=> {
-      res.status(400).json({ error: err.message });
-      console.log(`Error: ${error}`);
+      res.status(400).json({ error: error.message });
     });
 };
 
@@ -56,13 +59,11 @@ const blog_delete = (req, res) => {
   Blog.findByIdAndDelete(id)
     .then((result) => {
       res
-        //.send(result)
         .status(200)
         .json({ redirect: "/blogs" });
     })
     .catch((error)=> {
-      res.status(400).json({ error: err.message });
-      console.log(`Error: ${error}`);
+      res.status(400).json({ error: error.message });
     });
 };
 
@@ -77,11 +78,18 @@ const blog_update_get = (req, res) => {
      .catch(error=> {
        res
          .status(404)
-         .render("404", { title: "Page Not Found", message: err.message });
+         .render("404", { title: "Page Not Found", message: error.message });
      }); 
 };
 
 const blog_update_patch = (req, res) => {
+  if (
+    (req.body.title && req.body.title.length === 0) ||
+    (req.body.snippet && req.body.snippet.length === 0) ||
+    (req.body.body && req.body.body.length === 0)
+  ) {
+    return res.status(400).json({ error: "Invalid blog input" });
+  }
   const id = req.params.id;
   Blog.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
@@ -89,12 +97,11 @@ const blog_update_patch = (req, res) => {
   })
     .then((result) => {
       res
-        //.send(result)
         .status(200)
         .json({ redirect: `/blogs/${id}` });
     })
     .catch((error)=> {
-      res.status(400).json({ error: err.message });
+      res.status(400).json({ error: error.message });
     });
 };
 
