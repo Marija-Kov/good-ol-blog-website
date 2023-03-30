@@ -10,22 +10,16 @@ const app = require('./app.js');
 
 chai.use(chaiHttp);
 
-let blogsArray = []
-
+let testBlogsArray = []
 before(async () => {
 await db.connect()
   for(let i = 0; i < 3; ++i){
-     chai
-       .request(app)
-       .post("/blogs")
-       .send({
-         title: `blog title ${i+1}`,
-         snippet: `blog snippet ${i+1}`,
-         body: `blog body ${i+1}`,
-       })
-       .end((err, res) => {
-        blogsArray.push(res.body)
-       });
+   const testBlog = new Blog({
+     title: `blog title ${i + 1}`,
+     snippet: `blog snippet ${i + 1}`,
+     body: `blog body ${i + 1}`,
+   });
+   testBlogsArray.push(await testBlog.save())
  } 
 
 });
@@ -33,7 +27,7 @@ await db.connect()
 after(async ()=> {
    await db.clear()
    await db.close()
-   blogsArray = [];
+   testBlogsArray = [];
 })
 
 describe("App", () => {
@@ -63,7 +57,7 @@ describe("App", () => {
       });
 
       it("should get a blog by id given that it exists in the database", (done) => {
-        const blog = blogsArray[0]
+        const blog = testBlogsArray[0]
         const id = blog._id;
         chai
           .request(app)
@@ -128,7 +122,7 @@ describe("App", () => {
 
     describe("/PATCH", () => {
       it("should respond with status 400 if blog update attempt was made with invalid input", (done) => {
-        const blog = blogsArray[0];
+        const blog = testBlogsArray[0];
         const id = blog._id;
         const blogUpdate = { body: "" };
         chai
@@ -150,7 +144,7 @@ describe("App", () => {
       });
 
       it("should update a blog given that all the input is valid", (done) => {
-        const blog = blogsArray[0];
+        const blog = testBlogsArray[0];
         const id = blog._id;
         const blogUpdate = {
           body: "A full-bodied blog.",
@@ -175,7 +169,7 @@ describe("App", () => {
 
     describe("/DELETE a blog", () => {
       it("should delete a blog given that the blog with the provided id was found", (done) => {
-        const blog = blogsArray.pop();
+        const blog = testBlogsArray.pop();
         const id = blog._id;
         chai
           .request(app)
