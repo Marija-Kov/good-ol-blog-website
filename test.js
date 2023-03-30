@@ -11,6 +11,7 @@ const app = require('./app.js');
 chai.use(chaiHttp);
 
 let testBlogsArray = []
+let testUser;
 before(async () => {
 await db.connect()
   for(let i = 0; i < 3; ++i){
@@ -21,13 +22,17 @@ await db.connect()
    });
    testBlogsArray.push(await testBlog.save())
  } 
-
+testUser = await new User({
+  email: "poozh@mail.yu",
+  password: "abcABC123!"
+ }).save();
 });
 
 after(async ()=> {
    await db.clear()
    await db.close()
    testBlogsArray = [];
+   testUser=null;
 })
 
 describe("App", () => {
@@ -188,4 +193,37 @@ describe("App", () => {
       });
     });
   });
+  describe.only("authController", () => {
+     describe("/POST - user login", () => {
+      it("should respond with status 400 given that user credentials are invalid", (done) => {
+        const credentials = {
+          email: testUser.email, password: "abcAB"
+        }
+        chai
+         .request(app)
+         .post(`/user/login`)
+         .send(credentials)
+         .end((err, res) => {
+          res.should.have.status(400);     
+          done()
+         })
+
+      });
+      it("should respond with status 200 given that user credentials are valid", (done) => {
+        const credentials = {
+          email: testUser.email, password: testUser.password
+        }
+        chai
+         .request(app)
+         .post(`/user/login`)
+         .send(credentials)
+         .end((err, res) => {
+          res.should.have.status(200);
+          assert.exists(res.body.token);     
+          done()
+         })
+
+      })
+     })
+  })
 });
