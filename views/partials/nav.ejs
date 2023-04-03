@@ -6,9 +6,18 @@
         </a>
     </div>
    <div class="links">
-     <li><a href="/">Blogs</a></li>
-     <li><a href="/about">About</a></li>
-     <li><a href="/blogs/create">New Blog</a></li>
-     <li><a href="/login">Log In</a></li>
-    </div>
+    <li id="blogs"><a href="/">Blogs</a></li>
+    <li><a href="/about">About</a></li>
+    <% if(user){ %>
+     <li><a href="/blogs/create" id="newBlog">New Blog</a></li>
+     <li>
+        <form action="/user/logout" method="GET" class="logout">
+            <button class="logout">Log Out</button>
+        </form>
+    </li>
+    <%}%>
+    <% if(!user){ %>
+     <li><a href="/login" id="logIn">Log In</a></li>
+    <%}%>
+  </div>
 </nav>
