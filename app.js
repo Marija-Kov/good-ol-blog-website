@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require("./routes/userRoutes");
 const app = express();
+const expressEjsLayouts = require('express-ejs-layouts');
 require('dotenv').config(); 
 
 mongoose.set("strictQuery", false);
@@ -19,9 +20,26 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.set('view engine', 'ejs');  
                           
+app.use(expressEjsLayouts);                         
 app.use(express.static('public'));  
 app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
+
+app.use((req, res, next) => {
+  if(req.headers.cookie){
+    const cookies = {};
+    const cookiesArray = req.headers.cookie.split(";");
+    cookiesArray.forEach((cookie) => {
+    const [key, value] = cookie.trim().split("=");
+    cookies[key] = value;
+  });
+  res.locals.user = cookies;
+  } else {
+  res.locals.user = null;
+  }
+  next();
+});
+/// +++++++++++++++++++++++++++++++++
 
 app.get('/', (req, res) => {  
     res.redirect('/blogs'); 

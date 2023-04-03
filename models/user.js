@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
-const bcrypt = require("bcrypt");
-const validator = require("validator");
+// const bcrypt = require("bcrypt");
+
 
 const userSchema = new Schema({
   email: {
@@ -36,8 +36,12 @@ userSchema.statics.login = async function (email, password) {
     throw Error("That email does not exist in our database");
   }
 
-  const match = await bcrypt.compare(password, user.password);
-  if (!match) {
+  // const match = await bcrypt.compare(password, user.password);
+  // if (!match) {
+  //   throw Error("Wrong password");
+  // }
+ 
+  if(password !== user.password){
     throw Error("Wrong password");
   }
 

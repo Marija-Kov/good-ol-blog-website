@@ -62,16 +62,32 @@ nav {
 .links {
     width: 40%;
     display: flex;
+    padding-top: 20px;
     }
 
 li {
     margin: 0 5%;
 }
 
-a:hover {
+.logout {
+    max-width: unset;
+    height: unset;
+    color: black;
+    background: unset;
+    border: none;
+    cursor: pointer; 
+    padding: 0;
+    display: inline;
+    max-width: unset;
+    min-width: unset;
+}
+
+a:hover,
+.logout:hover {
     color: rgb(77, 77, 245);
 
 }
+
 .edit,
 .delete {
      border: solid 1px aquamarine;

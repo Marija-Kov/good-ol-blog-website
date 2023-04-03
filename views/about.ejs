@@ -1,16 +1,16 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('./partials/head.ejs') %>
+
 <body>
-
-    <%- include('./partials/nav.ejs') %>
-
         <div class="about content">
             <h2>About Us</h2>
             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Excepturi dicta dolorum vitae explicabo, ducimus voluptate eveniet rem laborum cum maiores eligendi autem ad ullam, ipsam perspiciatis atque qui nisi?</p>
             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Excepturi dicta dolorum vitae explicabo, ducimus voluptate eveniet rem laborum cum maiores eligendi autem ad ullam, ipsam perspiciatis atque qui nisi?</p>
             <p>Lorem ipsum, dolor sit amet consectetur adipisicing elit. Excepturi dicta dolorum vitae explicabo, ducimus voluptate eveniet rem laborum cum maiores eligendi autem ad ullam, ipsam perspiciatis atque qui nisi?</p>
+             <% if (user) { %>
+              <button>Edit</button>
+             <% } %>
         </div>
-    <%- include('./partials/foot.ejs') %>
+
 </body>
 </html>

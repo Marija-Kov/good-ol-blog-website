@@ -1,28 +1,27 @@
 <!DOCTYPE html>
 <html lang="en">
-<%- include('../partials/head.ejs') %>
-<body>
 
-<%- include('../partials/nav.ejs') %>
+<body>
 
 <div class="details content">
 <h2><%= blog.title %></h2>
 <div class="content">
     <p><%= blog.body %></p>
-<a class="delete" data-doc="<%= blog._id %>">delete</a>    
-<a class="edit" data-doc="<%= blog._id %>" href= "/blogs/update/<%= blog._id %>">edit</a>  
-</div>
+  <% if(user){ %>
+    <a class="delete" data-doc="<%= blog._id %>">delete</a>    
+    <a class="edit" data-doc="<%= blog._id %>" href= "/blogs/update/<%= blog._id %>">edit</a>  
+  <%}%>
+  
+ 
+ </div>
 
 </div>
-
-    <%- include('../partials/foot.ejs') %>
 
     <script>
-     const trashcan = document.querySelector('a.delete');
-
+     const trashcan = document.querySelector('a.delete') || null
+     trashcan && 
      trashcan.addEventListener('click', e => {
          const endpoint = `/blogs/${trashcan.dataset.doc}`;
-
          fetch(endpoint, {  
              method: 'DELETE'
          })
@@ -32,7 +31,7 @@
            console.log(`Error: ${error}`)
           });
       }); 
-
     </script>
+
   </body>
 </html>
