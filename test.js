@@ -218,8 +218,23 @@ describe("App", () => {
          .post(`/user/login`)
          .send(credentials)
          .end((err, res) => {
+          console.log(res);
+          res.should.have.status(200);  
+          res.text.should.match(/all blogs/i); 
+          done()
+         })
+
+      })
+     });
+     describe("/GET - user logout", () => {
+      it("should respond with status 200 given that the user logged out successfully", (done) => {
+        chai
+         .request(app)
+         .get(`/user/logout`)
+         .end((err, res) => {
           res.should.have.status(200);
-          assert.exists(res.body.token);     
+          res.text.should.match(/log in/i);  
+          res.text.should.match(/all blogs/i);     
           done()
          })
 
