@@ -4,6 +4,7 @@ const mongoose = require('mongoose');
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require("./routes/userRoutes");
 const app = express();
+const expressEjsLayouts = require('express-ejs-layouts');
 require('dotenv').config(); 
 
 mongoose.set("strictQuery", false);
@@ -19,6 +20,7 @@ mongoose.connect(dbURI, { useNewUrlParser: true, useUnifiedTopology: true })
 
 app.set('view engine', 'ejs');  
                           
+app.use(expressEjsLayouts);                         
 app.use(express.static('public'));  
 app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
@@ -37,6 +39,7 @@ app.use((req, res, next) => {
   }
   next();
 });
+/// +++++++++++++++++++++++++++++++++
 
 app.get('/', (req, res) => {  
     res.redirect('/blogs'); 
