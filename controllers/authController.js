@@ -9,15 +9,43 @@ const user_login = async (req, res) => {
   const { email, password } = req.body;
   try {
    const user = await User.login(email, password); 
-   const id = user._id;
-   const token = createToken(id);
-   const accountType = user.accountType;
-   res.status(200).json({ token, accountType, redirect: "/blogs" })
+   res
+     .status(200)
+     .cookie("id", user._id, {
+       path: "/",
+       domain: process.env.DOMAIN,
+       expires: new Date(Date.now() + 900000),
+       httpOnly: true,
+       secure: true,
+       sameSite: "strict"
+     })
+     .cookie("accountType", user.accountType, {
+       path: "/",
+       domain: process.env.DOMAIN,
+       expires: new Date(Date.now() + 900000),
+       httpOnly: true,
+       secure: true,
+       sameSite: "strict"
+     })
+     .redirect("/");
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 }
 
+const user_logout = async (req, res) => {
+ try {
+  res
+    .status(200)
+    .clearCookie("id")
+    .clearCookie("accountType")
+    .redirect("/");  
+ } catch (error) {
+  res.status(400).json({ error: error.message });
+ }
+}
+
 module.exports = {
-    user_login
+    user_login,
+    user_logout
 }
