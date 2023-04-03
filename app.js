@@ -23,6 +23,21 @@ app.use(express.static('public'));
 app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
 
+app.use((req, res, next) => {
+  if(req.headers.cookie){
+    const cookies = {};
+    const cookiesArray = req.headers.cookie.split(";");
+    cookiesArray.forEach((cookie) => {
+    const [key, value] = cookie.trim().split("=");
+    cookies[key] = value;
+  });
+  res.locals.user = cookies;
+  } else {
+  res.locals.user = null;
+  }
+  next();
+});
+
 app.get('/', (req, res) => {  
     res.redirect('/blogs'); 
 })                         
