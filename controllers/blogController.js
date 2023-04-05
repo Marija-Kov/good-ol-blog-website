@@ -98,7 +98,7 @@ const blog_update_patch = (req, res) => {
     .then((result) => {
       res
         .status(200)
-        .json({ redirect: `/blogs/${id}` });
+        .redirect(`/blogs/${id}`);
     })
     .catch((error)=> {
       res.status(400).json({ error: error.message });

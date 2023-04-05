@@ -3,42 +3,17 @@
 
 <body>
     <div class="create-blog content">
-        <form>
+        <form action="/blogs/<%= blog._id %>" method="POST">
             <label for="title">Blog title:</label>
             <input type="text" id="title" name="title" value="<%= blog.title %>" required>
             <label for="snippet">Blog snippet:</label>
             <input type="text" id="snippet" name="snippet" value="<%= blog.snippet %>" required>
             <label for="body">Blog body:</label>
             <textarea id="body" name="body" required><%= blog.body %></textarea>
-            <button class="save-btn" data-doc="<%= blog._id %>">Save</button>
+            <button class="save-btn">Save</button>
         </form>
         
     </div>
-<script>
-    const saveBtn = document.querySelector('.save-btn');
-    const blogTitle = document.querySelector('#title');
-    const blogSnippet = document.querySelector('#snippet');
-    const blogBody = document.querySelector('#body');
-    saveBtn.addEventListener('click', e => {
-      e.preventDefault();
-     const endpoint = `/blogs/${saveBtn.dataset.doc}`;
-     fetch(endpoint, {
-         method: 'PATCH',
-         body: JSON.stringify({
-        _id: saveBtn.dataset.doc,
-        title: blogTitle.value, 
-        snippet: blogSnippet.value,
-        body: blogBody.value}),
-        headers: {
-            'Content-type': 'application/json; charset=UTF-8'
-        }
-     })
-      .then(response => response.json())
-      .then(() => window.location.href = `/blogs/${saveBtn.dataset.doc}`)
-      .catch(error=> console.log(error))
-    })
-
-</script>
 </body>
 
 </html>
