@@ -37,11 +37,13 @@ const blog_create_get = (req, res) => {
 };
 
 const blog_create_post = (req, res) => {
-  const blog = new Blog(req.body);
+  if (!res.locals.user) { 
+    return res.status(400).redirect("/blogs/create");
+  }
   if(!req.body.title || !req.body.snippet || !req.body.body){
     return res.status(400).json({error: "Invalid blog input"})
   }
-  const id = req.params.id;
+  const blog = new Blog(req.body); 
   blog
     .save()
     .then(result => {
@@ -55,7 +57,10 @@ const blog_create_post = (req, res) => {
 };
 
 const blog_delete = (req, res) => {
-  const id = req.params.id;
+    if (!res.locals.user) {
+      return res.status(400).redirect("/blogs/create");
+    }
+  const id = req.params.id;  
   Blog.findByIdAndDelete(id)
     .then((result) => {
       res
@@ -68,6 +73,9 @@ const blog_delete = (req, res) => {
 };
 
 const blog_update_get = (req, res) => { 
+      if (!res.locals.user) {
+      return res.status(400).redirect("/blogs/create");
+    }
   const id = req.params.id;
   Blog.findById(id)
      .then(result => {  
@@ -83,6 +91,9 @@ const blog_update_get = (req, res) => {
 };
 
 const blog_update_patch = (req, res) => {
+  if(!res.locals.user){
+    return res.status(400).redirect("/blogs/create")
+  }
   if (
     (req.body.title && req.body.title.length === 0) ||
     (req.body.snippet && req.body.snippet.length === 0) ||
