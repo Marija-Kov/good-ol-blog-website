@@ -69,7 +69,9 @@ li {
     margin: 0 5%;
 }
 
-.logout {
+.logout,
+.edit,
+.delete {
     max-width: unset;
     height: unset;
     color: black;
@@ -89,9 +91,12 @@ a:hover,
 }
 
 .edit,
-.delete {
+button.delete {
      border: solid 1px aquamarine;
      padding: 1px 15px 3px 15px;
+}
+button.delete {
+    padding:4.5px 15px 4.5px 15px;
 }
 .edit:hover,
 .delete:hover {
