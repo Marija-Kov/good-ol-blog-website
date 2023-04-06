@@ -8,30 +8,14 @@
 <div class="content">
     <p><%= blog.body %></p>
   <% if(user){ %>
-    <a class="delete" data-doc="<%= blog._id %>">delete</a>    
+    <form class="delete" action="/blogs/delete/<%= blog._id %>" method="GET">
+      <button class="delete">delete</button>
+    </form>  
     <a class="edit" data-doc="<%= blog._id %>" href= "/blogs/update/<%= blog._id %>">edit</a>  
   <%}%>
   
- 
  </div>
-
 </div>
 
-    <script>
-     const trashcan = document.querySelector('a.delete') || null
-     trashcan && 
-     trashcan.addEventListener('click', e => {
-         const endpoint = `/blogs/${trashcan.dataset.doc}`;
-         fetch(endpoint, {  
-             method: 'DELETE'
-         })
-         .then((response)=> response.json()) 
-         .then(data => window.location.href = data.redirect)
-         .catch(error=> {
-           console.log(`Error: ${error}`)
-          });
-      }); 
-    </script>
-
-  </body>
+</body>
 </html>

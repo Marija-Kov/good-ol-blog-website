@@ -2,6 +2,7 @@
 <html lang="en">
 
 <body>
+    <% if (user) { %>
     <div class="create-blog content">
         <form action="/blogs/<%= blog._id %>" method="POST">
             <label for="title">Blog title:</label>
@@ -11,9 +12,12 @@
             <label for="body">Blog body:</label>
             <textarea id="body" name="body" required><%= blog.body %></textarea>
             <button class="save-btn">Save</button>
-        </form>
-        
+        </form> 
     </div>
+    <% } else { %>
+        <%- include('../partials/not-authorized.ejs') %>
+    <% } %>
+
 </body>
 
 </html>
