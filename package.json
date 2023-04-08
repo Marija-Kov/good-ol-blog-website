@@ -4,7 +4,8 @@
   "description": "A CRUD app built with NodeJS, MongoDB and EJS.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha || true"
+    "test": "mocha -- --detectOpenHandles --runInBand || true",
+    "test-with-coverage": "nyc --reporter=text mocha"
   },
   "author": "",
   "license": "ISC",
@@ -26,6 +27,7 @@
     "mocha": "^10.2.0",
     "mongodb": "^5.1.0",
     "mongodb-memory-server": "^8.12.1",
+    "nyc": "^15.1.0",
     "supertest": "^6.3.3"
   }
 }
