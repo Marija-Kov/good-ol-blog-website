@@ -1,14 +1,16 @@
+const app = require('./app.js');
+
 const chai = require('chai');
+const chaiHttp = require('chai-http');
+chai.use(chaiHttp);
+const agent = chai.request.agent(app);
 const assert = chai.assert;
 const should = chai.should();
-const chaiHttp = require('chai-http');
+const expect = chai.expect;
 
 const db = require("./config/test/database.config");
 const Blog = require('./models/blog');
 const User = require("./models/user");
-const app = require('./app.js');
-
-chai.use(chaiHttp);
 
 let testBlogsArray = []
 let testUser;
@@ -33,11 +35,12 @@ after(async ()=> {
    await db.close()
    testBlogsArray = [];
    testUser=null;
+   agent.close()
 })
 
 describe("App", () => {
-  describe("blogController", () => {
-    describe("/GET blog(s)", () => {
+  describe("Blog Routes", () => {
+    describe("GET /", () => {
       it("should get all blogs", (done) => {
         chai
           .request(app)
@@ -48,8 +51,10 @@ describe("App", () => {
             done();
           });
       });
+    });
 
-      it("should respond with status 404 if the blog with the provided id doesn't exist in the database", (done) => {
+    describe("GET /:id", () => {
+       it("should respond with status 404 if the blog with the provided id doesn't exist in the database", (done) => {
         const id = "11";
         chai
           .request(app)
@@ -73,10 +78,78 @@ describe("App", () => {
             res.text.should.match(blogFound);
             done();
           });
-      });
-    });
+      }); 
 
-    describe("/POST", () => {
+      it("shouldn't render 'delete' and 'edit' buttons on blog details view given that the user is not authorized", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id; 
+        chai
+          .request(app)
+          .get(`/blogs/${id}`)
+          .end((err, res) => {
+           res.text.should.not.match(/edit/i);
+           res.text.should.not.match(/delete/i);
+           done() 
+          })
+      });
+
+      it("should render 'delete' and 'edit' buttons on blog details view given that the user is authorized", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id;
+        agent
+          .get(`/blogs/${id}`)
+          .set("Cookie", "mockAuthCookie")
+          .end((err, res) => {
+            res.text.should.match(/edit/i);
+            res.text.should.match(/delete/i);
+            done();
+          });
+         
+      })
+      
+    })
+  
+    describe("GET /create", () => {
+      it("should render not-authorized message given that the user is not authorized to access blogs/create view", (done) => {
+         chai
+           .request(app)
+           .get("/blogs/create")
+           .end((err, res) => {
+             res.text.should.match(/not authorized/i);
+             done();
+           });
+      });
+      it("should render an empty blog form given that the user is authorized to access blogs/create view", (done) => {
+            agent
+              .get(`/blogs/create`)
+              .set("Cookie", "mockAuthCookie")
+              .end((err, res) => {
+                res.text.should.match(/blog title/i);
+                res.text.should.match(/blog snippet/i);
+                res.text.should.match(/blog body/i);
+                done();
+              });
+       //   });
+      });
+    })
+
+    describe("POST /", () => {
+      it("should render not-authorized message given that the user is not authorized to post a new blog", (done) => {
+        let newBlog = {
+          title: "new blog title",
+          snippet: "new blog snippet",
+          body: "new blog body",
+        };
+        chai
+          .request(app)
+          .post("/blogs")
+          .send(newBlog)
+          .end((err, res) => {
+            res.text.should.match(/not authorized/i);
+            done();
+          });
+      });
+
       it("should respond with status 400 if blog post attempt was made with invalid input", (done) => {
         let blog = {
           title: "faulty blog",
@@ -86,6 +159,7 @@ describe("App", () => {
         chai
           .request(app)
           .post("/blogs")
+          .set("Cookie", "mockAuthCookie")
           .send(blog)
           .end((err, res) => {
             res.should.have.status(400);
@@ -109,10 +183,10 @@ describe("App", () => {
         chai
           .request(app)
           .post("/blogs")
+          .set("Cookie", "mockAuthCookie")
           .send(newBlog)
           .end((err, res) => {
             res.should.have.status(200);
-            assert.exists(res.body._id);
           });
         chai
           .request(app)
@@ -125,14 +199,59 @@ describe("App", () => {
       });
     });
 
-    describe("/PATCH", () => {
+    describe("GET /update/:id", () => {
+      it("should render not-authorized message given that the user is not authorized to access blogs/update view", (done) => {
+         const blog = testBlogsArray[0];
+         const id = blog._id;
+         chai
+           .request(app)
+           .get(`/blogs/update/${id}`)
+           .end((err, res) => {
+             res.text.should.match(/not authorized/i);
+             done();
+           });
+      });
+
+      it("should render a blog form prefilled with the existing blog content given that the user is authorized to access blogs/update view", (done) => {
+        const blog = testBlogsArray[0];
+         const id = blog._id;
+         chai
+           .request(app)
+           .get(`/blogs/update/${id}`)
+           .set("Cookie", "mockAuthCookie")
+           .end((err, res) => {
+             const prefill = new RegExp(`${blog.title}`);
+             res.text.should.match(prefill);
+             done();
+           });
+      });
+    })
+
+    describe("POST /:id", () => {
+      it("should render not-authorized message given that the user is not authorized to post blog updates", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id;
+         const blogUpdate = {
+           body: "A full-bodied blog.",
+         };
+         chai
+           .request(app)
+           .post(`/blogs/${id}`)
+           .send(blogUpdate)
+           .end((err, res) => {
+             res.text.should.match(/not authorized/i);
+             done();
+           });
+      });
+
       it("should respond with status 400 if blog update attempt was made with invalid input", (done) => {
         const blog = testBlogsArray[0];
         const id = blog._id;
         const blogUpdate = { body: "" };
         chai
           .request(app)
-          .patch(`/blogs/${id}`)
+          .post(`/blogs/${id}`)
+          .set("Cookie", "mockAuthCookie")
           .send(blogUpdate)
           .end((err, res) => {
             res.should.have.status(400);
@@ -156,7 +275,8 @@ describe("App", () => {
         };
         chai
           .request(app)
-          .patch(`/blogs/${id}`)
+          .post(`/blogs/${id}`)
+          .set("Cookie", "mockAuthCookie")
           .send(blogUpdate)
           .end((err, res) => {
             res.should.have.status(200);
@@ -172,13 +292,26 @@ describe("App", () => {
       });
     });
 
-    describe("/DELETE a blog", () => {
+    describe("GET /delete/:id", () => {
+      it("should render not-authorized message given that the user is not authorized to delete blogs", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id;
+         chai
+           .request(app)
+           .get(`/blogs/delete/${id}`)
+           .end((err, res) => {
+             res.text.should.match(/not authorized/i);
+             done();
+           });
+      });
+
       it("should delete a blog given that the blog with the provided id was found", (done) => {
         const blog = testBlogsArray.pop();
         const id = blog._id;
         chai
           .request(app)
-          .delete(`/blogs/${id}`)
+          .get(`/blogs/delete/${id}`)
+          .set("Cookie", "mockAuthCookie")
           .end((err, res) => {
             res.should.have.status(200);
           });
@@ -193,20 +326,23 @@ describe("App", () => {
       });
     });
   });
-  describe.only("authController", () => {
-     describe("/POST - user login", () => {
+
+  describe("User routes", () => {
+     describe("POST /user/login", () => {
       it("should respond with status 400 given that user credentials are invalid", (done) => {
         const credentials = {
           email: testUser.email, password: "abcAB"
         }
         chai
-         .request(app)
-         .post(`/user/login`)
-         .send(credentials)
-         .end((err, res) => {
-          res.should.have.status(400);     
-          done()
-         })
+          .request(app)
+          .post(`/user/login`)
+          .send(credentials)
+          .set("Cookie", "mockAuthCookie")
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.text.should.not.match(/log out/i);
+            done();
+          });
 
       });
       it("should respond with status 200 given that user credentials are valid", (done) => {
@@ -217,27 +353,35 @@ describe("App", () => {
          .request(app)
          .post(`/user/login`)
          .send(credentials)
+         .set("Cookie", "mockAuthCookie")
          .end((err, res) => {
-          console.log(res);
           res.should.have.status(200);  
-          res.text.should.match(/all blogs/i); 
+          res.text.should.match(/log out/i); 
           done()
          })
-
       })
      });
-     describe("/GET - user logout", () => {
+     describe("GET /user/logout", () => {
       it("should respond with status 200 given that the user logged out successfully", (done) => {
+        const credentials = {
+          email: testUser.email, password: testUser.password
+        }
         chai
          .request(app)
-         .get(`/user/logout`)
+         .post(`/user/login`)
+         .send(credentials)
+         .set("Cookie", "mockAuthCookie")
          .end((err, res) => {
-          res.should.have.status(200);
-          res.text.should.match(/log in/i);  
-          res.text.should.match(/all blogs/i);     
-          done()
+          res.text.should.match(/log out/i);  
+          return chai
+            .request(app)
+            .get("/user/logout")
+            .end((err, res) => {
+              expect(res).to.redirect;
+              done();
+            });
+       
          })
-
       })
      })
   })
