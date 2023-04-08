@@ -35,6 +35,7 @@ Coming soon.
 
 - [NodeJS](https://nodejs.org/en/) - Server logic
 - [Express](https://expressjs.com/) - Routing
+- [EJS](https://ejs.co/) - Templating
 - [MongoDB](https://account.mongodb.com/account/login) - Database
 - [Mongoose](https://mongoosejs.com/) - MongoDB document modelling
 - [Dotenv](https://www.npmjs.com/package/dotenv) - secret-keeping
