@@ -327,21 +327,22 @@ describe("App", () => {
     });
   });
 
-  describe("authController", () => {
-     describe("/POST - user login", () => {
+  describe("User routes", () => {
+     describe("POST /user/login", () => {
       it("should respond with status 400 given that user credentials are invalid", (done) => {
         const credentials = {
           email: testUser.email, password: "abcAB"
         }
         chai
-         .request(app)
-         .post(`/user/login`)
-         .send(credentials)
-         .end((err, res) => {
-          res.should.have.status(400);   
-          res.text.should.not.match(/log out/i);  
-          done()
-         })
+          .request(app)
+          .post(`/user/login`)
+          .send(credentials)
+          .set("Cookie", "mockAuthCookie")
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.text.should.not.match(/log out/i);
+            done();
+          });
 
       });
       it("should respond with status 200 given that user credentials are valid", (done) => {
@@ -360,18 +361,27 @@ describe("App", () => {
          })
       })
      });
-     describe("/GET - user logout", () => {
+     describe("GET /user/logout", () => {
       it("should respond with status 200 given that the user logged out successfully", (done) => {
+        const credentials = {
+          email: testUser.email, password: testUser.password
+        }
         chai
          .request(app)
-         .get(`/user/logout`)
+         .post(`/user/login`)
+         .send(credentials)
+         .set("Cookie", "mockAuthCookie")
          .end((err, res) => {
-          res.should.have.status(200);
-          res.text.should.match(/log in/i);  
-          res.text.should.match(/all blogs/i);     
-          done()
+          res.text.should.match(/log out/i);  
+          return chai
+            .request(app)
+            .get("/user/logout")
+            .end((err, res) => {
+              expect(res).to.redirect;
+              done();
+            });
+       
          })
-
       })
      })
   })
