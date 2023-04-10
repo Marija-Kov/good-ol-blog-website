@@ -11,7 +11,7 @@ const user_login = async (req, res) => {
    const user = await User.login(email, password); 
    res
      .status(200)
-     .cookie("id", user._id, {
+     .cookie("userId", user._id, {
        path: "/",
        domain: process.env.DOMAIN,
        expires: new Date(Date.now() + 900000),

@@ -53,7 +53,7 @@ app.use(
    )
 
 app.use((req, res, next) => {
-  if(req.headers.cookie){
+  if (req.headers.cookie && req.headers.cookie.match(/userId/i)) {
     const cookies = {};
     const cookiesArray = req.headers.cookie.split(";");
     cookiesArray.forEach((cookie) => {
