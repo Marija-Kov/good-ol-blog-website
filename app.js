@@ -48,6 +48,9 @@ app.get('/', (req, res) => {
 app.get("/about", (req, res) => {
   res.render("about", { title: "About" }); 
 });
+app.get("/signup", (req, res) => {
+  res.render("users/signup", { title: "Sign Up" });
+});
 app.get("/login", (req, res) => {
   res.render("users/login", { title: "Log In" });
 });
