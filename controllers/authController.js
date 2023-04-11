@@ -1,51 +1,44 @@
-const User = require("../models/user");
-const jwt = require('jsonwebtoken');
+const connection = require("../config/database");
+const User = connection.models.User;
+const passport = require("passport");
+const { genPassword } = require("../utils/passwordUtils");
 
-const createToken = (_id) => {
-  return jwt.sign({ _id }, process.env.SECRET, { expiresIn: "1d" });
+const user_signup = async (req, res, next) => {
+  const email = req.body.email;
+  if (
+    !email.match(
+      /^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/
+    )
+  ) {
+    return res.status(400).send("Invalid email address");
+  }
+  try {
+    const { salt, hash } = await genPassword(req.body.password);
+    const newUser = new User({
+      email: email,
+      hash: hash,
+      salt: salt,
+    });
+    newUser.save();
+    res.redirect("/login");
+  } catch (error) {
+    console.log(error);
+  }
 };
 
-const user_login = async (req, res) => {
-  const { email, password } = req.body;
-  try {
-   const user = await User.login(email, password); 
-   res
-     .status(200)
-     .cookie("userId", user._id, {
-       path: "/",
-       domain: process.env.DOMAIN,
-       expires: new Date(Date.now() + 900000),
-       httpOnly: true,
-       secure: true,
-       sameSite: "strict"
-     })
-     .cookie("accountType", user.accountType, {
-       path: "/",
-       domain: process.env.DOMAIN,
-       expires: new Date(Date.now() + 900000),
-       httpOnly: true,
-       secure: true,
-       sameSite: "strict"
-     })
-     .redirect("/");
-  } catch (error) {
-    res.status(400).json({ error: error.message });
-  }
-}
+const user_login = passport.authenticate("local", {failureRedirect: '/404', successRedirect:'/blogs/create'});
 
-const user_logout = async (req, res) => {
- try {
-  res
-    .status(200)
-    .clearCookie("id")
-    .clearCookie("accountType")
-    .redirect("/");  
- } catch (error) {
-  res.status(400).json({ error: error.message });
- }
+const user_logout = (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        next(err);
+      }
+      res.redirect("/login");
+    })
 }
 
 module.exports = {
-    user_login,
-    user_logout
-}
+  user_login,
+  user_logout,
+  user_signup
+};
