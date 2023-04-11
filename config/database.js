@@ -1,4 +1,5 @@
 const mongoose = require("mongoose");
+const userSchema = require("../models/user");
 require("dotenv").config();
 
 const connection = mongoose.createConnection(process.env.MONGO_URI, {
@@ -6,16 +7,6 @@ const connection = mongoose.createConnection(process.env.MONGO_URI, {
   useUnifiedTopology: true,
 });
 
-// just like User model
-
-const OtherUser = connection.model(
-  "OtherUser",
-  new mongoose.Schema({
-    email: String,
-    hash: String,
-    salt: String,
-    admin: Boolean,
-  })
-);
+const User = connection.model("User", userSchema);
 
 module.exports = connection;
