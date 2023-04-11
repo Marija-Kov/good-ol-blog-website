@@ -10,7 +10,7 @@ const User = connection.models.OtherUser;
 // router.get("/logout", authController.user_logout);
 
 // passport middleware intercepts the request, verifies credentials and proceeds to the next middleware
-router.post("/login", passport.authenticate("local"), (req, res, next) => {});
+router.post("/login", passport.authenticate("local", {failureRedirect: '/404', successRedirect:'/blogs/create'}));
 
 router.post("/signup", async (req, res, next) => {
     try {
@@ -22,12 +22,20 @@ router.post("/signup", async (req, res, next) => {
     })
      newUser.save();
      res.redirect('/login')  
-     console.log(newUser)
     } catch (error) {
        console.log(error) 
     }
     
 });
+
+router.get('/logout', (req, res, next) => {
+    req.logout((err) => {
+      if (err) {
+        next(err);
+      }
+      res.redirect("/login");
+    }); 
+})
 
 
 module.exports = router;
