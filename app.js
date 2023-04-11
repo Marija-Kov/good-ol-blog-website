@@ -52,26 +52,32 @@ app.use(
     })
    )
 
-app.use((req, res, next) => {
-  if (req.headers.cookie && req.headers.cookie.match(/userId/i)) {
-    const cookies = {};
-    const cookiesArray = req.headers.cookie.split(";");
-    cookiesArray.forEach((cookie) => {
-    const [key, value] = cookie.trim().split("=");
-    cookies[key] = value;
-  });
-  res.locals.user = cookies;
-  } else {
-  res.locals.user = null;
-  }
-  next();
-});
-
 // REGISTER PASSPORT
 require('./config/passport');
 // keep reinitializing passport middleware as we hit different routes
 app.use(passport.initialize());
 app.use(passport.session())
+
+app.use((req, res, next) => {
+  if (req.user) {
+    res.locals.user = req.user;
+  } else {
+    res.locals.user = null;
+  }
+  //-------NO PASSPORT-------//
+  // if (req.headers.cookie && req.headers.cookie.match(/userId/i)) {
+  //   const cookies = {};
+  //   const cookiesArray = req.headers.cookie.split(";");
+  //   cookiesArray.forEach((cookie) => {
+  //     const [key, value] = cookie.trim().split("=");
+  //     cookies[key] = value;
+  //   });
+  //   res.locals.user = cookies;
+  // } else {
+  //   res.locals.user = null;
+  // }
+  next();
+});
 
 app.get('/', (req, res) => {  
     res.redirect('/blogs'); 
