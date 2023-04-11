@@ -11,7 +11,7 @@ const connection = mongoose.createConnection(process.env.MONGO_URI, {
 const OtherUser = connection.model(
   "OtherUser",
   new mongoose.Schema({
-    username: String,
+    email: String,
     hash: String,
     salt: String,
     admin: Boolean,
