@@ -34,3 +34,19 @@ const strategy = new LocalStrategy(customFields, verifyCallback); // customField
 
 passport.use(strategy)
 
+// here passport takes the user from the db 
+// and puts it in the Express session on the request object
+passport.serializeUser((user, done) => {
+ done(null, user.id)
+});
+
+// taking user id from the Express session (req.session.passport.user) 
+// to get the user from the db and populate req.user
+passport.deserializeUser(async (userId, done) => {
+   try {
+    const user = await User.findById(userId);
+    done(null, user); 
+   } catch (error) {
+      done(error)
+   } 
+});
