@@ -13,9 +13,9 @@ const customFields = {
 
 
 // this is reminiscent of static methods:
-const verifyCallback = async (username, password, done) => { // done is a function you eventually pass the result of your auth to
+const verifyCallback = async (email, password, done) => { // done is a function you eventually pass the result of your auth to
  try {
-   const user = await User.findOne({ username: username });
+   const user = await User.findOne({ email: email });
    if(!user){
       return done(null, false) // error:null, res:false
    }
