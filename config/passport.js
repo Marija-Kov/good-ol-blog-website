@@ -2,7 +2,7 @@ const passport = require("passport");
 const { verifyPassword } = require("../utils/passwordUtils");
 const LocalStrategy = require("passport-local").Strategy;
 const connection = require('./database');
-const User = connection.models.OtherUser;
+const User = connection.models.User;
 
 // to verify credentials, passport will look for "username" and "password" literally, but this can be modified
 // by setting up custom fields:

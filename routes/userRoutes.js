@@ -4,7 +4,7 @@ const authController = require("../controllers/authController");
 const passport = require("passport");
 const connection = require("../config/database");
 const { genPassword } = require("../utils/passwordUtils");
-const User = connection.models.OtherUser;
+const User = connection.models.User;
 
 // router.post("/login", authController.user_login);
 // router.get("/logout", authController.user_logout);
