@@ -1,4 +1,5 @@
-const Blog = require("../models/blog");
+const connection = require("../config/database");
+const Blog = connection.models.Blog;
 
 const blog_index = (req, res) => {
   Blog.find()
