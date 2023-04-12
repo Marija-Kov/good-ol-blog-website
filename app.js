@@ -7,8 +7,6 @@ const app = express();
 const expressEjsLayouts = require('express-ejs-layouts');
 require('dotenv').config(); 
 const passport = require("passport");
-
-// SESSION STORAGE
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
 
@@ -21,14 +19,6 @@ const mongooseConnection = mongoose.createConnection(dbURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
-
-  //  mongoose.connect(dbURI, {
-  //    useNewUrlParser: true,
-  //    useUnifiedTopology: true,
-  //  })
-  // .then((result) => app.listen(process.env.PORT))
-  // .then(() => console.log("connected"))
-  // .catch((error) => console.log(`Error: ${error}`));
 
 app.set('view engine', 'ejs');  
                           
@@ -64,18 +54,6 @@ app.use((req, res, next) => {
   } else {
     res.locals.user = null;
   }
-  //-------NO PASSPORT-------//
-  // if (req.headers.cookie && req.headers.cookie.match(/userId/i)) {
-  //   const cookies = {};
-  //   const cookiesArray = req.headers.cookie.split(";");
-  //   cookiesArray.forEach((cookie) => {
-  //     const [key, value] = cookie.trim().split("=");
-  //     cookies[key] = value;
-  //   });
-  //   res.locals.user = cookies;
-  // } else {
-  //   res.locals.user = null;
-  // }
   next();
 });
 
