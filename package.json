@@ -4,7 +4,7 @@
   "description": "A CRUD app built with NodeJS, MongoDB and EJS.",
   "main": "app.js",
   "scripts": {
-    "test": "mocha -- --detectOpenHandles --runInBand || true",
+    "test": "NODE_ENV=test mocha -- --detectOpenHandles --runInBand || true",
     "test-with-coverage": "nyc --reporter=text mocha"
   },
   "author": "",
