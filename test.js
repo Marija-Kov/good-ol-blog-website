@@ -8,9 +8,7 @@ const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
 
-const db = require("./config/test/database.config");
-const Blog = require('./models/blog');
-const User = require("./models/user");
+const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
 
 let testBlogsArray = []
 let testUser;
