@@ -12,8 +12,9 @@
 2. [App Features](#features)
 3. [Tools and Dependencies](#tools)
 4. [Test coverage](#test)
-5. [Resources](#resources)
-6. [Author](#author)
+5. [Todos](#todos)
+6. [Resources](#resources)
+7. [Author](#author)
 
 
 ---
@@ -39,6 +40,10 @@ Coming soon.
 - [MongoDB](https://account.mongodb.com/account/login) - Database
 - [Mongoose](https://mongoosejs.com/) - MongoDB document modelling
 - [Dotenv](https://www.npmjs.com/package/dotenv) - secret-keeping
+- [Passport](https://www.passportjs.org/) - authentication middleware
+- [Passport local](https://www.passportjs.org/packages/passport-local/) - passport local auth strategy (username & password)
+- [Connect mongo](https://github.com/jdesboeufs/connect-mongo) - session store
+
 
 #### Dev Dependencies
 
@@ -71,6 +76,15 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
   blogRoutes.js           |     100 |      100 |     100 |     100 |                       
   userRoutes.js           |     100 |      100 |     100 |     100 |                       
 
+
+<br>
+
+## Todos <a name = "todos"></a>
+
+- Redo tests considering that the authentication strategy was changed.
+- Make the error messages like 'wrong password' show in the UI.
+- Feature: Allow authenticated user to store blog post drafts.
+- Remove unused packages.
 
 <br>
 
