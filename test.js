@@ -1,4 +1,4 @@
-const app = require('./app.js');
+const { app, mongooseConnection } = require("./app.js");
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -10,31 +10,50 @@ const expect = chai.expect;
 
 const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
 
-let testBlogsArray = []
+const userSchema = require("./models/user");
+const blogSchema = require("./models/blog");
+
+const Blog = mongooseConnection.model("Blog", blogSchema);
+const User = mongooseConnection.model("User", userSchema);
+
+let testBlogsArray;
 let testUser;
+
 before(async () => {
-await db.connect()
-  for(let i = 0; i < 3; ++i){
-   const testBlog = new Blog({
-     title: `blog title ${i + 1}`,
-     snippet: `blog snippet ${i + 1}`,
-     body: `blog body ${i + 1}`,
-   });
-   testBlogsArray.push(await testBlog.save())
- } 
-testUser = await new User({
-  email: "poozh@mail.yu",
-  password: "abcABC123!"
- }).save();
+  try {
+    testBlogsArray = [];
+    for (let i = 0; i < 3; ++i) {
+      const testBlog = new Blog({
+        title: `blog title ${i + 1}`,
+        snippet: `blog snippet ${i + 1}`,
+        body: `blog body ${i + 1}`,
+      });
+      testBlogsArray.push(await testBlog.save());
+    }
+    testUser = new User({
+      email: "poozh@mail.yu",
+      hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
+      salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
+    }).save();
+  } catch (error) {
+    console.log(error);
+  }
 });
 
-after(async ()=> {
-   await db.clear()
-   await db.close()
-   testBlogsArray = [];
-   testUser=null;
-   agent.close()
-})
+after(async () => {
+  try {
+    for (const key in mongooseConnection.collections) {
+      await mongooseConnection.collections[key].deleteMany({});
+    }
+     await mongooseConnection.dropDatabase();
+    await mongooseConnection.close();
+    testBlogsArray = null;
+    testUser = null;
+    agent.close();
+  } catch (error) {
+    console.log(error);
+  }
+});
 
 describe("App", () => {
   describe("Blog Routes", () => {
