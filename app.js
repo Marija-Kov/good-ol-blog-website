@@ -14,7 +14,7 @@ mongoose.set("strictQuery", false);
 
 app.use(express.json());  
 
-const dbURI = process.env.MONGO_URI;  
+const dbURI = process.env.NODE_ENV === 'test' ? process.env.TEST_MONGO_URI : process.env.MONGO_URI;  
 const mongooseConnection = mongoose.createConnection(dbURI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
@@ -78,9 +78,10 @@ app.use((req, res) => {
 })
 
 function listen(){
-  app.listen(process.env.PORT)
-  console.log('listening')
+  const port = process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT
+  app.listen(port);
+  console.log(`listening on port ${port}`)
 }
 listen()
 
-module.exports = app
+module.exports = { app, mongooseConnection }
