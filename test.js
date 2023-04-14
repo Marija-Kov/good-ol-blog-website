@@ -342,7 +342,75 @@ describe("App", () => {
   });
 
   describe("User routes", () => {
-     describe("POST /user/login", () => {
+    describe("POST /user/signup", () => {
+      it("should respond with error given that email input is invalid", (done) => {
+        const input = {
+          email: "keech",
+          password: "abcABC123!",
+        };
+        chai
+          .request(app)
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.text.should.not.match(/log out/i);
+            res.text.should.match(/invalid email/i);
+            done();
+          });
+      });
+
+      it("should respond with error given that email already exists in the database", (done) => {
+        const input = {
+          email: "poozh@mail.yu",
+          password: "abcABC123!",
+        };
+        chai
+          .request(app)
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.text.should.not.match(/log out/i);
+            res.text.should.match(/already in use/i);
+            done();
+          });
+      });
+
+      it("should respond with error given that the password is not strong enough", (done) => {
+        const input = {
+          email: "daredev@mail.yu",
+          password: "a",
+        };
+        chai
+          .request(app)
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            res.should.have.status(400);
+            res.text.should.not.match(/log out/i);
+            res.text.should.match(/not strong enough/i);
+            done();
+          });
+      });
+
+      it("should respond with status 200 and redirect to login view given that email input is valid", (done) => {
+        const input = {
+          email: "sorkor@pimpim.pij",
+          password: "abcABC123!",
+        };
+        chai
+          .request(app)
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            res.should.have.status(200);
+            res.text.should.match(/\/user\/login/i);
+            done();
+          });
+      });
+    });
+    describe("POST /user/login", () => {
       it("should respond with status 400 given that user credentials are invalid", (done) => {
         const credentials = {
           email: testUser.email, password: "abcAB"
