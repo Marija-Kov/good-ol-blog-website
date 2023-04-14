@@ -1,5 +1,4 @@
-const connection = require("../config/database");
-const User = connection.models.User;
+const { User } = require("../config/database");
 const passport = require("passport");
 const { genPassword } = require("../utils/passwordUtils");
 
