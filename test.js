@@ -1,4 +1,4 @@
-const { app, mongooseConnection } = require("./app.js");
+const app = require("./app.js");
 
 const chai = require('chai');
 const chaiHttp = require('chai-http');
@@ -10,11 +10,7 @@ const expect = chai.expect;
 
 const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
 
-const userSchema = require("./models/user");
-const blogSchema = require("./models/blog");
-
-const Blog = mongooseConnection.model("Blog", blogSchema);
-const User = mongooseConnection.model("User", userSchema);
+const { connection, User, Blog } = require("./config/database")
 
 let testBlogsArray;
 let testUser;
@@ -24,9 +20,9 @@ before(async () => {
     testBlogsArray = [];
     for (let i = 0; i < 3; ++i) {
       const testBlog = new Blog({
-        title: `blog title ${i + 1}`,
-        snippet: `blog snippet ${i + 1}`,
-        body: `blog body ${i + 1}`,
+        title: `TEST title ${i + 1}`,
+        snippet: `TEST snippet ${i + 1}`,
+        body: `TEST body ${i + 1}`,
       });
       testBlogsArray.push(await testBlog.save());
     }
@@ -42,11 +38,11 @@ before(async () => {
 
 after(async () => {
   try {
-    for (const key in mongooseConnection.collections) {
-      await mongooseConnection.collections[key].deleteMany({});
+    for (const key in connection.collections) {
+      await connection.collections[key].deleteMany({});
     }
-     await mongooseConnection.dropDatabase();
-    await mongooseConnection.close();
+     await connection.dropDatabase();
+    await connection.close();
     testBlogsArray = null;
     testUser = null;
     agent.close();
@@ -64,7 +60,8 @@ describe("App", () => {
           .get("/blogs")
           .end((err, res) => {
             res.should.have.status(200);
-            res.text.should.match(/all blogs/i);
+            res.text.should.match(/all blogs/i); 
+            res.text.should.match(/test title 1/i);
             done();
           });
       });
