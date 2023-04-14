@@ -11,6 +11,13 @@ const user_signup = async (req, res, next) => {
   ) {
     return res.status(400).send("Invalid email address");
   }
+  if(await User.findOne({email: email})){
+    return res.status(400).send("Email already in use");
+  }
+  const password = req.body.password;
+  if(password.length < 6){
+    return res.status(400).send("Password not strong enough");
+  }
   try {
     const { salt, hash } = await genPassword(req.body.password);
     const newUser = new User({
