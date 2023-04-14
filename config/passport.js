@@ -1,8 +1,7 @@
 const passport = require("passport");
 const { verifyPassword } = require("../utils/passwordUtils");
 const LocalStrategy = require("passport-local").Strategy;
-const connection = require('./database');
-const User = connection.models.User;
+const { User } = require('./database');
 
 // to verify credentials, passport will look for "username" and "password" literally, but this can be modified
 // by setting up custom fields:
@@ -10,7 +9,6 @@ const customFields = {
     usernameField: "email",
     passwordField: "password"
 }
-
 
 // this is reminiscent of static methods:
 const verifyCallback = async (email, password, done) => { // done is a function you eventually pass the result of your auth to
