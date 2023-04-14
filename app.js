@@ -14,11 +14,7 @@ mongoose.set("strictQuery", false);
 
 app.use(express.json());  
 
-const dbURI = process.env.NODE_ENV === 'test' ? process.env.TEST_MONGO_URI : process.env.MONGO_URI;  
-const mongooseConnection = mongoose.createConnection(dbURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const { connection } = require("./config/database")
 
 app.set('view engine', 'ejs');  
                           
@@ -28,7 +24,7 @@ app.use(morgan('dev'));
 app.use(express.urlencoded({ extended: true }));
 
 const sessionStore = new MongoStore({
-  mongooseConnection: mongooseConnection,
+  mongooseConnection: connection,
   collection: 'sessions'
 });
 
@@ -84,4 +80,4 @@ function listen(){
 }
 listen()
 
-module.exports = { app, mongooseConnection }
+module.exports = app;
