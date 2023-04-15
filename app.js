@@ -9,16 +9,12 @@ require('dotenv').config();
 const passport = require("passport");
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-
+const flash = require("connect-flash");
 mongoose.set("strictQuery", false);
 
 app.use(express.json());  
 
-const dbURI = process.env.MONGO_URI;  
-const mongooseConnection = mongoose.createConnection(dbURI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const { connection } = require("./config/database")
 
 app.set('view engine', 'ejs');  
                           
@@ -26,9 +22,10 @@ app.use(expressEjsLayouts);
 app.use(express.static('public'));  
 app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
+app.use(flash());
 
 const sessionStore = new MongoStore({
-  mongooseConnection: mongooseConnection,
+  mongooseConnection: connection,
   collection: 'sessions'
 });
 
@@ -36,8 +33,9 @@ app.use(
       session({
       secret: process.env.SECRET,
       resave: false,
-      saveUninitialized: true,
+      saveUninitialized: false,
       store: sessionStore,
+      unset: "destroy",
       cookie: {maxAge: 360000}
     })
    )
@@ -49,11 +47,17 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 app.use((req, res, next) => {
+  if (req.session.flash && req.session.flash.error) {
+    res.locals.error = req.session.flash.error;
+  } else {
+    res.locals.error = null;
+  }
   if (req.user) {
     res.locals.user = req.user;
   } else {
     res.locals.user = null;
   }
+  req.flash(null);
   next();
 });
 
@@ -78,9 +82,10 @@ app.use((req, res) => {
 })
 
 function listen(){
-  app.listen(process.env.PORT)
-  console.log('listening')
+  const port = process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT
+  app.listen(port);
+  console.log(`listening on port ${port}`)
 }
 listen()
 
-module.exports = app
+module.exports = app;

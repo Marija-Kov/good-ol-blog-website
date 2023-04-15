@@ -1,36 +1,41 @@
 const passport = require("passport");
 const { verifyPassword } = require("../utils/passwordUtils");
 const LocalStrategy = require("passport-local").Strategy;
-const connection = require('./database');
-const User = connection.models.User;
+const { User } = require('./database');
 
 // to verify credentials, passport will look for "username" and "password" literally, but this can be modified
 // by setting up custom fields:
 const customFields = {
     usernameField: "email",
-    passwordField: "password"
+    passwordField: "password",
+    passReqToCallback: true
 }
 
-
-// this is reminiscent of static methods:
-const verifyCallback = async (email, password, done) => { // done is a function you eventually pass the result of your auth to
- try {
+const verifyCallback = async (req, email, password, done) => { // done is a function you eventually pass the result of your auth to
+   if (!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
+    ) {
+      req.flash("error", "Please enter a valid email");
+      return done(null, false);
+    } 
+   try {
    const user = await User.findOne({ email: email });
-   if(!user){
-      return done(null, false) // error:null, res:false
+   if(!user){ 
+      req.flash("error", "Please enter email you have signed up with");
+      return done(null, false) // arguments: error, response
    }
    const isValid = await verifyPassword(password, user.hash, user.salt);
-   if(isValid){
+   if(isValid){ 
       return done(null, user)
    } else {
+      req.flash("error", "Wrong password");
       return done(null, false)
-   }  
+   }   
  } catch (error) {
     done(error);
  }
 }
 
-const strategy = new LocalStrategy(customFields, verifyCallback); // customFields are passed here as the 1st arg 
+const strategy = new LocalStrategy(customFields, verifyCallback);
 
 passport.use(strategy)
 
