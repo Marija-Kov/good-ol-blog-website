@@ -9,7 +9,7 @@ require('dotenv').config();
 const passport = require("passport");
 const session = require('express-session');
 const MongoStore = require('connect-mongo')(session);
-
+const flash = require("connect-flash");
 mongoose.set("strictQuery", false);
 
 app.use(express.json());  
@@ -22,6 +22,7 @@ app.use(expressEjsLayouts);
 app.use(express.static('public'));  
 app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
+app.use(flash());
 
 const sessionStore = new MongoStore({
   mongooseConnection: connection,
@@ -45,11 +46,17 @@ app.use(passport.initialize());
 app.use(passport.session())
 
 app.use((req, res, next) => {
+  if (req.session.flash && req.session.flash.error) {
+    res.locals.error = req.session.flash.error;
+  } else {
+    res.locals.error = null;
+  }
   if (req.user) {
     res.locals.user = req.user;
   } else {
     res.locals.user = null;
   }
+  req.flash(null);
   next();
 });
 
