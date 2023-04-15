@@ -14,6 +14,7 @@ const { connection, User, Blog } = require("./config/database")
 
 let testBlogsArray;
 let testUser;
+let testUserPassword = "abcABC123!";
 
 before(async () => {
   try {
@@ -26,7 +27,7 @@ before(async () => {
       });
       testBlogsArray.push(await testBlog.save());
     }
-    testUser = new User({
+    testUser = await new User({
       email: "poozh@mail.yu",
       hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
       salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
@@ -45,6 +46,7 @@ after(async () => {
     await connection.close();
     testBlogsArray = null;
     testUser = null;
+    testUserPassword = null;
     agent.close();
   } catch (error) {
     console.log(error);
@@ -343,128 +345,161 @@ describe("App", () => {
 
   describe("User routes", () => {
     describe("POST /user/signup", () => {
-      it("should respond with error given that email input is invalid", (done) => {
+      it("should render error element given that email input value is invalid", (done) => {
         const input = {
           email: "keech",
           password: "abcABC123!",
         };
-        chai
-          .request(app)
+        agent
           .post(`/user/signup`)
           .send(input)
           .end((err, res) => {
-            res.should.have.status(400);
-            res.text.should.not.match(/log out/i);
-            res.text.should.match(/invalid email/i);
+            expect(res).to.redirectTo(/signup/i);
+            res.text.should.match(/please enter valid email/i);
             done();
           });
       });
 
-      it("should respond with error given that email already exists in the database", (done) => {
+      it("should render error element given that email already exists in the database", (done) => {
         const input = {
-          email: "poozh@mail.yu",
+          email: testUser.email,
           password: "abcABC123!",
         };
-        chai
-          .request(app)
+        agent
           .post(`/user/signup`)
           .send(input)
           .end((err, res) => {
-            res.should.have.status(400);
-            res.text.should.not.match(/log out/i);
+            expect(res).to.redirectTo(/signup/i);
             res.text.should.match(/already in use/i);
             done();
           });
       });
 
-      it("should respond with error given that the password is not strong enough", (done) => {
+      it("should render error element given that the password is not strong enough", (done) => {
         const input = {
           email: "daredev@mail.yu",
           password: "a",
         };
-        chai
-          .request(app)
+        agent
           .post(`/user/signup`)
           .send(input)
           .end((err, res) => {
-            res.should.have.status(400);
-            res.text.should.not.match(/log out/i);
+            expect(res).to.redirectTo(/signup/i);
             res.text.should.match(/not strong enough/i);
             done();
           });
       });
 
-      it("should respond with status 200 and redirect to login view given that email input is valid", (done) => {
+      it("should redirect to login view given that input is valid", (done) => {
         const input = {
           email: "sorkor@pimpim.pij",
           password: "abcABC123!",
         };
-        chai
-          .request(app)
+        agent
           .post(`/user/signup`)
           .send(input)
           .end((err, res) => {
-            res.should.have.status(200);
-            res.text.should.match(/\/user\/login/i);
+            expect(res).to.redirectTo(/login/i);
             done();
           });
       });
     });
+
     describe("POST /user/login", () => {
-      it("should respond with status 400 given that user credentials are invalid", (done) => {
+      it("should render error element given that email doesn't exist in the database", (done) => {
         const credentials = {
-          email: testUser.email, password: "abcAB"
-        }
-        chai
-          .request(app)
+          email: "some@email.yu",
+          password: "abcABC123!",
+        };
+        agent
           .post(`/user/login`)
           .send(credentials)
-          .set("Cookie", "mockAuthCookie")
           .end((err, res) => {
-            res.should.have.status(400);
-            res.text.should.not.match(/log out/i);
+            expect(res).to.redirectTo(/login/i);
+            res.text.should.match(/please enter email you have signed up with/i);
             done();
           });
-
       });
-      it("should respond with status 200 given that user credentials are valid", (done) => {
+
+      it("should render error element given that email input value is invalid", (done) => {
         const credentials = {
-          email: testUser.email, password: testUser.password
-        }
-        chai
-         .request(app)
-         .post(`/user/login`)
-         .send(credentials)
-         .set("Cookie", "mockAuthCookie")
-         .end((err, res) => {
-          res.should.have.status(200);  
-          res.text.should.match(/log out/i); 
-          done()
-         })
-      })
-     });
-     describe("GET /user/logout", () => {
-      it("should respond with status 200 given that the user logged out successfully", (done) => {
+          email: "sorkor",
+          password: "abcABC123!",
+        };
+        agent
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {
+            expect(res).to.redirectTo(/login/i);
+            res.text.should.match(/Please enter a valid email/i);
+            done();
+          });
+      });
+
+      it("should render error element given that the password is wrong", (done) => {
         const credentials = {
-          email: testUser.email, password: testUser.password
-        }
-        chai
-         .request(app)
-         .post(`/user/login`)
-         .send(credentials)
-         .set("Cookie", "mockAuthCookie")
-         .end((err, res) => {
-          res.text.should.match(/log out/i);  
-          return chai
-            .request(app)
-            .get("/user/logout")
+          email: "sorkor@pimpim.pij",
+          password: "ab",
+        };
+        agent
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {
+            expect(res).to.redirectTo(/login/i);
+            res.text.should.match(/wrong password/i);
+            done();
+          });
+      });
+
+      it("should redirect to a protected view given that user credentials are valid", (done) => {
+        const credentials = {
+          email: "sorkor@pimpim.pij",
+          password: "abcABC123!",
+        };
+          agent 
+            .post(`/user/login`)
+            .send(credentials)
             .end((err, res) => {
-              expect(res).to.redirect;
-              done();
+              res.should.have.status(200);
+              expect(res).to.redirectTo(/blogs\/create/i);
+              res.text.should.match(/log out/i);
+              done()
             });
-       
-         })
+      });
+    });
+
+    describe("GET /user/logout", () => {
+      it("should redirect and render logged-out navbar given that the user logged out successfully", (done) => {
+        const credentials = {
+          email: testUser.email,
+          password: testUserPassword,
+        };
+        agent
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {
+            return agent
+              .get("/user/logout")
+              .end((err, res) => {
+                expect(res).to.redirect;
+                res.text.should.match(/log in/i);
+                done();
+              });
+          });
+      });
+    });
+  });
+
+  describe("404 route", ()=> {
+    it("should render Page Not Found if the route doesn't exist", (done)=> {
+      chai
+      .request(app)
+      .get('/somepage')
+      .end((err, res) => {
+        res.text.should.match(/doesn't exist/i)
+        done()
       })
-     })
+    })
   })
+
 });
