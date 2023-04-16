@@ -52,6 +52,11 @@ app.use((req, res, next) => {
   } else {
     res.locals.error = null;
   }
+  if (req.session.flash && req.session.flash.success) {
+    res.locals.success = req.session.flash.success;
+  } else {
+    res.locals.success = null;
+  }
   if (req.user) {
     res.locals.user = req.user;
   } else {
