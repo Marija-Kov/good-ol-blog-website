@@ -27,6 +27,7 @@ const user_signup = async (req, res, next) => {
       salt: salt,
     });
     newUser.save();
+    req.flash("success", "Success! You may log in now.");
     res.redirect("/login");
   } catch (error) {
     console.log(error);
