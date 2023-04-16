@@ -490,6 +490,35 @@ describe("App", () => {
     });
   });
 
+  describe.only("About route", () => {
+    describe("GET /about", () => {
+      it("should show unauthorized user version of the about view given that the user isn't authorized", (done) => {
+        chai
+          .request(app)
+          .get("/about")
+          .end((err, res) => {
+            res.text.should.match(/about us/i);
+            res.text.should.not.match(/edit/i);
+            done();
+          });
+      });
+
+      it("should show authorized user version of the about view given that the user is authorized", (done) => {
+        agent
+          .post(`/user/login`)
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent.get("/about").end((err, res) => {
+              res.text.should.match(/about us/i);
+              res.text.should.match(/edit/i);
+              done();
+            });
+          });
+      });
+    });
+
+  })
+
   describe("404 route", ()=> {
     it("should render Page Not Found if the route doesn't exist", (done)=> {
       chai
