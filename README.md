@@ -43,7 +43,7 @@ Coming soon.
 - [Passport](https://www.passportjs.org/) - authentication middleware
 - [Passport local](https://www.passportjs.org/packages/passport-local/) - passport local auth strategy (username & password)
 - [Connect mongo](https://github.com/jdesboeufs/connect-mongo) - session store
-
+- [Connect flash](https://github.com/jaredhanson/connect-flash) - storing messages to be shown in the UI
 
 #### Dev Dependencies
 
@@ -82,7 +82,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 ## Todos <a name = "todos"></a>
 
 - Redo tests considering that the authentication strategy was changed.
-- Make the error messages like 'wrong password' show in the UI.
+- Populate app features and resources in readme.
 - Feature: Allow authenticated user to store blog post drafts.
 - Remove unused packages.
 
