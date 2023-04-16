@@ -390,7 +390,7 @@ describe("App", () => {
           });
       });
 
-      it("should redirect to login view given that input is valid", (done) => {
+      it("should redirect to login view and show success message given that input is valid", (done) => {
         const input = {
           email: "sorkor@pimpim.pij",
           password: "abcABC123!",
@@ -400,6 +400,7 @@ describe("App", () => {
           .send(input)
           .end((err, res) => {
             expect(res).to.redirectTo(/login/i);
+            res.text.should.match(/success/i);
             done();
           });
       });
@@ -490,7 +491,7 @@ describe("App", () => {
     });
   });
 
-  describe.only("About route", () => {
+  describe("About route", () => {
     describe("GET /about", () => {
       it("should show unauthorized user version of the about view given that the user isn't authorized", (done) => {
         chai
