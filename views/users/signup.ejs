@@ -2,7 +2,7 @@
 <html lang="en">
 
 <body>
-    <div class="create-blog content">
+    <div class="signup-form-wrapper content">
         <form action="/user/signup" method="POST">
             <label for="email">Email:</label>
             <input type="text" id="email" name="email" required>
@@ -11,7 +11,7 @@
              <% if (error){ %>
                  <p class="error"><%= error %></p>
                 <% } %>
-            <button>Sign Up</button>
+            <button id="signup">Sign Up</button>
         </form>
     </div>
 </body>
