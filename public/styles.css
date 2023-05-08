@@ -1,166 +1,368 @@
- @import url('https://fonts.googleapis.com/css2?family=Amatic+SC&family=Arvo:wght@700&family=PT+Sans:ital@0;1&display=swap');
-    
+/* ---- General style ---- */
+@import url('https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Signika:wght@300;400;500;600&display=swap');
+
+:root {
+ --primary: rgb(36, 36, 36);    
+ --accent-1: orangered;
+ --body-bkg: rgb(207, 185, 135);
+ --title-font: 'Lexend', sans-serif;
+ --title-font-2: 'Signika', sans-serif;
+ --text-primary-font: 'Signika', sans-serif;
+ --navlink-font-size: 0.9em;
+ --hover-color: rgb(77, 77, 245);
+ --footer-text: rgb(100, 97, 97);
+ --error-text: crimson;
+}
+   
 *,
 *::before,
 *::after {
     box-sizing: border-box;
     list-style: none;
     text-decoration: none;
-    color: rgb(36, 36, 36);
-    
+    color: var(--primary);
+    margin: 0;
+    padding: 0;
 }
 
- 
- 
- body { 
-     width: 100vw;;
-        font-family: 'PT Sans', sans-serif;
-        background: rgb(255,253,227) ;
-        background: cover no-repeat radial-gradient(circle, rgba(255,253,227,1) 5%, rgba(154,209,195,1) 84%);
-        margin: 0;
-       padding: 0;
-    }
-
-nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  background:rgb(209, 247, 237);
-  width: 100vw;
-  height: 20vh;
+body { 
+  font-family: var(--text-primary-font);
+  font-weight: 300;
+  background: var(--body-bkg);
 }
 
+input {
+  height: 2em;
+  padding: 2px;
+  background: var(--body-bkg);
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+}
 
-.title {
-    margin-left: 5%; 
-    width: 50%;
-    font-family: 'Arvo', serif;
-    }
- h1 {
-    font-size: 2em;
-    text-transform: uppercase;
+.error {
+  color: var(--error-text);
 }
 
 .content {
-        padding-left: 50px;
-        height: 70vh;
-    }
+  padding-left: 50px;
+  height: 78vh;
+}
+
+/* ---- Views ---- */
+
+/* Index */
+
+.blogs {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+  overflow-y: scroll;
+}
+
 .snippet {
-    padding-left: 20px;
+  padding-left: 20px;
+}
+
+h2 {
+  font-size: 1em;
+  margin: 20px 0px;
 }
 
 .single::before {
-    content: '';
-    background: orangered;
-    height: 60px;
-    width: 5px;
-    position: absolute;
-    margin-top: 3px;
-    
+  content: '';
+  background: var(--accent-1);
+  height: 10%;
+  width: 5px;
+  position: absolute;
+  display: inline; 
+}
+
+.single > h3 {
+  font-family: var(--title-font-2);
+  font-size: 1.5em;
+  font-weight: 600;
+  margin: 10px;
+}
+
+/* Create + Update */
+
+.create-blog,
+.update-blog {
+  width: 100%;
+  height: 72vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.create-blog > form,
+.update-blog > form {
+  padding: 10vh 0;
+  gap: 2%;
+  display: flex;
+  flex-direction: column;
+  max-width: 500px;
+  min-width: 400px;
+  height: 100%;   
+}
+
+textarea {
+  padding-left: 2px;
+  height: 30vh;
+  background: var(--body-bkg);
+  border: solid 1px var(--primary);
+}
+
+button#submit-blog {
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-family: var(--text-primary-font);
+  font-weight: 500;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+  max-width: 30%;
+  height: 2.2em;
+}
+
+button#submit-blog:hover {
+  background: whitesmoke;
+  color: var(--primary);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px;
+}
+
+/* Details */
+
+.blog-details-buttons {
+ display: flex; 
+ gap: 8px;
+ margin-top: 20px;
+ font-family: var(--text-primary-font);
+}
+
+.delete {
+  height: unset;
+  color: var(--primary);
+  background: unset;
+  border: none;
+  cursor: pointer; 
+  padding: 0;
+  display: inline;
+  max-width: unset;
+  min-width: unset;
+}
+
+a#edit,
+button#delete {
+  height: 26px;  
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 0.8em;
+  font-weight: 400;
+  padding: 1px 15px 3px 15px;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+}
+
+a#edit {
+  padding-top: 4px;
+}
+
+a#edit:hover,
+button#delete:hover {
+  border: solid 1px var(--hover-color);
+  color: var(--hover-color);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px;
+}
+
+.blog-title {
+  font-size: 1.2em;  
+}
+
+.details > p {
+  max-width: 90%;
+}
+
+/* Login + Signup */
+
+.login-form-wrapper,
+.signup-form-wrapper {
+  width: 100%;
+  height: 72vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.login-form-wrapper > form,
+.signup-form-wrapper > form {
+  padding: 10vh 0;
+  gap: 2%;
+  display: flex;
+  flex-direction: column;
+  width: 300px;
+  height: 100%;
+}
+
+button#login,
+button#signup {
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-family: var(--text-primary-font);
+  font-weight: 500;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+  max-width: 30%;
+  height: 2.2em;
+}
+
+button#login:hover,
+button#signup:hover {
+  background: whitesmoke;
+  color: var(--primary);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px;
+}
+
+/* About */
+
+.about {
+  max-width: 700px;
+}
+
+.about > h2 {
+  font-size: 1.2em;
+}
+
+.about > p {
+  max-width: 90%;
+  margin-bottom: 20px;
+}
+
+button#edit-about {
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 0.8em;
+  font-weight: 400;
+  padding: 3px 15px 3px 15px;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+}
+
+button#edit-about:hover{
+  border: solid 1px var(--hover-color);
+  color: var(--hover-color);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px;
+}
+
+/* 404 */
+
+.not-found {
+  font-family: 'PT Sans', sans-serif;
+  font-size: 2em;
+}
+
+/* ---- Partials ---- */
+
+/* Head */
+
+.title > a > h1 {
+  font-size: 1.7em;
+  font-family: 'Reenie Beanie', cursive;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  font-family: var(--title-font);
+}
+
+/* Nav */
+
+nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  align-items: center;
+  justify-content: center;  
+  width: 100vw;
+  height: 15vh;
+  border-bottom: solid 1px var(--primary);
+  border-bottom-left-radius: 10px;
+  border-bottom-right-radius: 10px;
 }
 
 .links {
-    width: 40%;
-    display: flex;
-    padding-top: 20px;
-    }
-
-li {
-    margin: 0 5%;
+  width: 280px;
+  display: flex;
+  justify-content: center;
 }
 
-.logout,
-.edit,
-.delete {
-    max-width: unset;
-    height: unset;
-    color: black;
-    background: unset;
-    border: none;
-    cursor: pointer; 
-    padding: 0;
-    display: inline;
-    max-width: unset;
-    min-width: unset;
+.links > li {
+  margin: 0 2%;
+  font-weight: 400;
+  font-size: var(--navlink-font-size);
 }
 
-a:hover,
+.logout {
+  max-width: unset;
+  height: unset;
+  color: var(--primary);
+  font-family: var(--text-primary-font);
+  font-size: 1em;
+  background: unset;
+  border: none;
+  cursor: pointer; 
+  padding: 0;
+  display: inline;
+  max-width: unset;
+  min-width: unset;
+}
+
+.links > li > a:hover,
 .logout:hover {
-    color: rgb(77, 77, 245);
-
+  color: var(--hover-color);
 }
 
-.edit,
-button.delete {
-     border: solid 1px aquamarine;
-     padding: 1px 15px 3px 15px;
-}
-button.delete {
-    padding:4.5px 15px 4.5px 15px;
-}
-.edit:hover,
-.delete:hover {
-  cursor: pointer;  
-}
+/* Footer */
 
 footer {
-    height: 2vh;
-    position: absoulte;
-    bottom: 1%;
-    padding-left: 50px;
-    color: gray;
-}
-.about {
-    max-width: 700px;
-}
-.not-found {
-    font-family: 'PT Sans', sans-serif;
-    font-size: 2em;
+  position: relative;
+  height: fit-content;
+  padding-left: 50px;
+  color: var(--footer-text);
+  font-size: 0.8em;
 }
 
-.create-blog {
-    width: 100%;
-    height: 72vh;
-    display: flex;
-    justify-content: center;
-    align-items: center;
+/* Not authorized */
+
+.not-authorized {
+  margin: 50px 0 0 50px;
+  max-width: 700px;
 }
-form {
-    padding: 10vh 0;
-    gap: 2%;
-    display: flex;
-    flex-direction: column;
-    max-width: 500px;
-    min-width: 400px;
-    height: 100%;
-}
-input {
-    height: 2em;
-    border: solid 1px gray;
-}
-textarea {
-    height: 20vh;
-    border: solid 1px gray;
-}
-button {
-    max-width: 30%;
-    height: 2.2em;
-    background: rgb(36, 36, 36);
-    color: whitesmoke;
-    cursor: pointer;
+
+.not-authorized > p {
+  font-size: 1.5em;
 }
 
 @media screen and (max-width: 530px) {
-    nav {
-        flex-direction: column;
-        align-items: unset;
-    }
-    title, h1 {
-        width: 100vw;
-    }
 
-    .links {
-        width: 100vw;
-        margin: 0 auto;
-    }
+ .links {
+   width: 100vw;
+   margin: 0 auto;
+ }
+
 }
