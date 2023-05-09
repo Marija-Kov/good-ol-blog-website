@@ -1,23 +1,19 @@
-<!DOCTYPE html>
-<html lang="en">
-
-  <body>
-    
-    <div class="content">
-        <h2>All blogs</h2>
-    <div class="blogs">
-<% if (blogs.length > 0) { %>
-   <% blogs.forEach(blog => { %>
-<a class="single" href="/blogs/<%= blog._id %>">
- <h3 class = "title"><%=blog.title %></h3>
- <p class="snippet"><%= blog.snippet %></p>
-</a>
-<% }) %>
-<% } else {%>
-<p>No blogs to display!</p>
-    <% }%>
-    </div>
-  </div>  
-  
-  </body>
-</html>
+<div class="content">
+  <h2>All blogs</h2>
+  <div class="blogs">
+    <% if (blogs.length> 0) { %>
+      <% blogs.forEach(blog=> { %>
+        <a class="single" href="/blogs/<%= blog._id %>">
+          <h3 class="title">
+            <%=blog.title %>
+          </h3>
+          <p class="snippet">
+            <%= blog.snippet %>
+          </p>
+        </a>
+        <% }) %>
+          <% } else {%>
+            <p>No blogs to display!</p>
+            <% }%>
+  </div>
+</div>

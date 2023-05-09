@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
- <% if (user) { %>
+<% if (user) { %>
     <div class="create-blog content">
         <form action="/blogs" method="POST">
             <label for="title">Blog title:</label>
@@ -13,9 +10,6 @@
             <button id="submit-blog">Submit</button>
         </form>
     </div>
- <% } else { %>
-    <%- include('../partials/not-authorized.ejs') %>
- <% } %>
-
-</body>
-</html>
+    <% } else { %>
+        <%- include('../partials/not-authorized.ejs') %>
+            <% } %>

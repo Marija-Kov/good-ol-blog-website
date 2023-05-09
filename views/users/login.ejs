@@ -1,21 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<body>
-        <div class="login-form-wrapper content">
-            <form action="/user/login" method="POST">
-                <label for="email">Email:</label>
-                <input type="text" id="email" name="email" required>
-                <label for="password">Password:</label>
-                <input type="password" id="password" name="password" required>
-                <% if (error){ %>
-                 <p class="error"><%= error %></p>
-                <% } %>
+<div class="login-form-wrapper content">
+    <form action="/user/login" method="POST">
+        <label for="email">Email:</label>
+        <input type="text" id="email" name="email" required>
+        <label for="password">Password:</label>
+        <input type="password" id="password" name="password" required>
+        <% if (error){ %>
+            <p class="error">
+                <%= error %>
+            </p>
+            <% } %>
                 <% if (success){ %>
-                 <p class="success"><%= success %></p>
-                <% } %>
-                <button id="login">Log In</button>
-            </form>
-        </div>
-</body>
-</html>
+                    <p class="success">
+                        <%= success %>
+                    </p>
+                    <% } %>
+                        <button id="login">Log In</button>
+    </form>
+</div>
+

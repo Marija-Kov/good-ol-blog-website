@@ -1,8 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<body>
-    <% if (user) { %>
+<% if (user) { %>
     <div class="update-blog content">
         <form action="/blogs/<%= blog._id %>" method="POST">
             <label for="title">Blog title:</label>
@@ -12,12 +8,8 @@
             <label for="body">Blog body:</label>
             <textarea id="body" name="body" required><%= blog.body %></textarea>
             <button id="submit-blog">Save</button>
-        </form> 
+        </form>
     </div>
     <% } else { %>
         <%- include('../partials/not-authorized.ejs') %>
-    <% } %>
-
-</body>
-
-</html>
+            <% } %>
