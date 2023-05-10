@@ -1,7 +1,4 @@
-<!DOCTYPE html>
-<html lang="en">
-<body>
- <% if (user) { %>
+<% if (user) { %>
     <div class="create-blog content">
         <form action="/blogs" method="POST">
             <label for="title">Blog title:</label>
@@ -10,12 +7,9 @@
             <input type="text" id="snippet" name="snippet" required>
             <label for="body">Blog body:</label>
             <textarea id="body" name="body" required></textarea>
-            <button>Submit</button>
+            <button id="submit-blog">Submit</button>
         </form>
     </div>
- <% } else { %>
-    <%- include('../partials/not-authorized.ejs') %>
- <% } %>
-
-</body>
-</html>
+    <% } else { %>
+        <%- include('../partials/not-authorized.ejs') %>
+            <% } %>

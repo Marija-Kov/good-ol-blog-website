@@ -1,9 +1,5 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<body>
-    <% if (user) { %>
-    <div class="create-blog content">
+<% if (user) { %>
+    <div class="update-blog content">
         <form action="/blogs/<%= blog._id %>" method="POST">
             <label for="title">Blog title:</label>
             <input type="text" id="title" name="title" value="<%= blog.title %>" required>
@@ -11,13 +7,9 @@
             <input type="text" id="snippet" name="snippet" value="<%= blog.snippet %>" required>
             <label for="body">Blog body:</label>
             <textarea id="body" name="body" required><%= blog.body %></textarea>
-            <button class="save-btn">Save</button>
-        </form> 
+            <button id="submit-blog">Save</button>
+        </form>
     </div>
     <% } else { %>
         <%- include('../partials/not-authorized.ejs') %>
-    <% } %>
-
-</body>
-
-</html>
+            <% } %>

@@ -1,21 +1,18 @@
-<!DOCTYPE html>
-<html lang="en">
-
-<body>
-
-<div class="details content">
-<h2><%= blog.title %></h2>
-<div class="content">
-    <p><%= blog.body %></p>
-  <% if(user){ %>
-    <form class="delete" action="/blogs/delete/<%= blog._id %>" method="GET">
-      <button class="delete">delete</button>
-    </form>  
-    <a class="edit" data-doc="<%= blog._id %>" href= "/blogs/update/<%= blog._id %>">edit</a>  
-  <%}%>
-  
- </div>
+<div class="blog-details content">
+  <h2 class="blog-title">
+    <%= blog.title %>
+  </h2>
+  <div class="details">
+    <p>
+      <%= blog.body %>
+    </p>
+    <% if(user){ %>
+      <div class="blog-details-buttons">
+        <form class="delete" action="/blogs/delete/<%= blog._id %>" method="GET">
+          <button id="delete">delete</button>
+        </form>
+        <a id="edit" data-doc="<%= blog._id %>" href="/blogs/update/<%= blog._id %>">edit</a>
+      </div>
+      <%}%>
+  </div>
 </div>
-
-</body>
-</html>

@@ -14,20 +14,20 @@ const customFields = {
 const verifyCallback = async (req, email, password, done) => { // done is a function you eventually pass the result of your auth to
    if (!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
     ) {
-      req.flash("error", "Please enter a valid email");
+      req.flash("error", "⚠Please enter a valid email");
       return done(null, false);
     } 
    try {
    const user = await User.findOne({ email: email });
    if(!user){ 
-      req.flash("error", "Please enter email you have signed up with");
+      req.flash("error", "⚠Please enter email you have signed up with");
       return done(null, false) // arguments: error, response
    }
    const isValid = await verifyPassword(password, user.hash, user.salt);
    if(isValid){ 
       return done(null, user)
    } else {
-      req.flash("error", "Wrong password");
+      req.flash("error", "⚠Wrong password");
       return done(null, false)
    }   
  } catch (error) {
