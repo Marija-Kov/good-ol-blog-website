@@ -22,13 +22,22 @@
 
 ## Whyyy? <a name = "motivation"></a>
 
-It's fun and a great exercise of your backend skills. You'd enjoy learning about templates, how to send data from server to views and other things. 
+Working on this project, one can learn how separation of concerns inside a system is achieved with the MVC pattern. 
+It shows how a templating language is used to build user interfaces.
+It demonstrates some mechanisms of sending data from the server to views and the convenience of local variables for displaying up-to-date content. 
+It implements a widely-used authentication middleware.
+It's a fun exercise for one's backend skills. 
 
 <br>
 
 ## App Features <a name = "features"></a>
 
-Coming soon.
+A guest user has a read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
+
+Immediately upon signing up, a user document is created in the database and the user can log in into their account and see authenticated-user-only content.
+
+An authenticated user can (for the time limited by the validity of the session cookie) post and edit blogs (and will be able to edit about me content). The user can log out manually or they will be logged out automatically when the cookie expires. 
+Any attempts to perform authenticated-user-only actions upon token expiration will be followed by redirection to the page with error message and automatic redirection to the index.
 
 <br>
 
