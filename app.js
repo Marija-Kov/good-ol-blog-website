@@ -58,9 +58,11 @@ app.use((req, res, next) => {
     res.locals.success = null;
   }
   if (req.user) {
+    res.locals.draft = true;
     res.locals.user = req.user;
   } else {
     res.locals.user = null;
+    res.locals.draft = null;
   }
   req.flash(null);
   next();
