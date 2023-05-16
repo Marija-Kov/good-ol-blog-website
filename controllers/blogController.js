@@ -124,14 +124,44 @@ const blog_update_patch = (req, res) => {
   if(!res.locals.user){
     return res.status(400).redirect("/blogs/create")
   }
-  if (
-    (req.body.title && req.body.title.length === 0) ||
-    (req.body.snippet && req.body.snippet.length === 0) ||
-    (req.body.body && req.body.body.length === 0)
-  ) {
-    return res.status(400).json({ error: "Invalid blog input" });
-  }
   const id = req.params.id;
+  if (!req.body.title || req.body.title.length > 50) {
+    return res.status(400).render(`blogs/update`, {
+      title: "Update Blog",
+      blog: {
+        _id : id,
+        title: req.body.title,
+        snippet: req.body.snippet,
+        body: req.body.body,
+      },
+      error: { title: "⚠Title must be 1-50 characters long" },
+    });
+  }
+  if (!req.body.snippet || req.body.snippet.length > 100) {
+    return res.status(400).render(`blogs/update`, {
+      title: "Update Blog",
+      blog: {
+        _id: id,
+        title: req.body.title,
+        snippet: req.body.snippet,
+        body: req.body.body,
+      },
+      error: { snippet: "⚠Snippet must be 1-100 characters long" },
+    });
+  }
+  if (!req.body.body || req.body.body.length > 2000) {
+    return res.status(400).render(`blogs/update`, {
+      title: "Update Blog",
+      blog: {
+        _id: id,
+        title: req.body.title,
+        snippet: req.body.snippet,
+        body: req.body.body,
+      },
+      error: { body: "⚠Body must be 1-2000 characters long" },
+    });
+  }
+  
   Blog.findOneAndUpdate({ _id: id }, req.body, {
     new: true,
     runValidators: true,
