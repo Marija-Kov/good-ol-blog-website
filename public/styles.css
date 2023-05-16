@@ -129,7 +129,9 @@ textarea {
   border: solid 1px var(--primary);
 }
 
-button#submit-blog {
+button#submit-blog,
+a#discard-changes {
+  position: relative;
   border: solid 1px var(--primary);
   border-radius: 2px;
   color: var(--primary);
@@ -139,13 +141,24 @@ button#submit-blog {
   cursor: pointer;
   box-shadow: 2px 2px;
   max-width: 30%;
+  padding: 0 10px;
+  margin-right: 5px;
   height: 2.2em;
 }
 
-button#submit-blog:hover {
+a#discard-changes {
+  top: -1px;
+  font-size: 0.8em;
+  padding-top: 5.5px;
+  padding-bottom: 5.5px;
+}
+
+button#submit-blog:hover,
+a#discard-changes:hover {
   background: whitesmoke;
   color: var(--primary);
-  transform: translate(1px, 1px);
+  top: 1px;
+  left: 1px;
   box-shadow: 1px 1px;
 }
 
@@ -155,7 +168,8 @@ button#submit-blog:hover {
   height: 77.125vh;
 }
 
-.blog-details-buttons {
+.blog-details-buttons,
+.blog-update-buttons {
  display: flex; 
  gap: 8px;
  margin-top: 20px;

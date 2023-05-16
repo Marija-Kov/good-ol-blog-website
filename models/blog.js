@@ -5,18 +5,18 @@ const blogSchema = new Schema(
   {
     title: {
       type: String,
-      required: [true, "Blog title is required"],
-      minlength: [1, "Please enter at least one character"],
+      required: [true, "⚠Blog title is required"],
+      maxlength: [50, "⚠Max allowed length is 50 characters"],
     },
     snippet: {
       type: String,
-      required: [true, "Blog snippet is required"],
-      minlength: [1, "Please enter at least one character"],
+      required: [true, "⚠Blog snippet is required"],
+      maxlength: [100, "⚠Max allowed length is 100 characters"],
     },
     body: {
       type: String,
-      required: [true, "Blog body is required"],
-      minlength: [1, "Please enter at least one character"],
+      required: [true, "⚠Blog body is required"],
+      maxlength: [2000, "⚠Max allowed length is 2000 characters"],
     },
   },
   { timestamps: true }

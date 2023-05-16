@@ -2,12 +2,31 @@
     <div class="update-blog content">
         <form action="/blogs/<%= blog._id %>" method="POST">
             <label for="title">Blog title:</label>
-            <input type="text" id="title" name="title" value="<%= blog.title %>" required>
+            <input type="text" id="title" name="title" placeholder="1-50 characters" value="<%= blog.title %>">
+            <% if (error && error.title){ %>
+                <p class="error">
+                    <%= error.title %>
+                </p>
+            <% } %> 
             <label for="snippet">Blog snippet:</label>
-            <input type="text" id="snippet" name="snippet" value="<%= blog.snippet %>" required>
+            <input type="text" id="snippet" name="snippet" placeholder="1-100 characters" value="<%= blog.snippet %>">
+            <% if (error && error.snippet){ %>
+                <p class="error">
+                    <%= error.snippet %>
+                </p>
+            <% } %> 
             <label for="body">Blog body:</label>
-            <textarea id="body" name="body" required><%= blog.body %></textarea>
-            <button id="submit-blog">Save</button>
+            <textarea id="body" name="body" placeholder="1-2000 characters"><%= blog.body %></textarea>
+            <% if (error && error.body){ %>
+                <p class="error">
+                    <%= error.body %>
+                </p>
+            <% } %> 
+            <div class="update-blog-buttons">
+            <button id="submit-blog">Save</button> 
+            <a id="discard-changes" href="/blogs/<%= blog._id %>">Discard</a>   
+            </div>
+            
         </form>
     </div>
     <% } else { %>
