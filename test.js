@@ -315,10 +315,10 @@ describe("App", () => {
           });
       });
 
-      it("should not update blog if blog update attempt was made with invalid input", (done) => {
+      it("should show error and not update blog if blog update attempt was made with invalid title", (done) => {
         const blog = testBlogsArray[0];
         const id = blog._id;
-        const blogUpdate = { body: "" };
+        const blogUpdate = { title: "Too Long Title sjhfsjhfsjhjhfkjshfsjhfsjdkfhjfhsfjhsdjkfdhsfjkshfjshdfjsdhfskjfsjhdfjskh" };
         agent
           .post(`/user/login`)
           .send({ email: testUser.email, password: testUserPassword })
@@ -327,6 +327,57 @@ describe("App", () => {
               .post(`/blogs/${id}`)
               .send(blogUpdate)
               .end((err, res) => {
+                res.text.should.match(/title must be 1-50 characters long/i);
+                return agent.get(`/blogs/${id}`).end((err, res) => {
+                  const oldTitle = new RegExp(`${blog.title}`);
+                  res.text.should.match(oldTitle);
+                  done();
+                });
+              });
+          });
+      });
+
+      it("should show error and not update blog if blog update attempt was made with invalid snippet", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id;
+        const blogUpdate = { 
+          title: "New blog title",
+          snippet: "Too Long Snippet fhsdjfhjhfjkhflashfajkfhfahfhdfkjhaskfjhafjkhafjdfhasjdlfasdkjfhasfhasfhasdlkhfksahfaksjhfjsalhfaskjdhfjkhsafjklhasksjdhfasjkfhaskjfh" };
+        agent
+          .post(`/user/login`)
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post(`/blogs/${id}`)
+              .send(blogUpdate)
+              .end((err, res) => {
+                res.text.should.match(/snippet must be 1-100 characters long/i);
+                return agent.get(`/blogs`).end((err, res) => {
+                  const oldSnippet = new RegExp(`${blog.snippet}`);
+                  res.text.should.match(oldSnippet);
+                  done();
+                });
+              });
+          });
+      });
+
+      it("should show error and not update blog if blog update attempt was made with invalid body", (done) => {
+        const blog = testBlogsArray[0];
+        const id = blog._id;
+        const blogUpdate = { 
+          title: "New blog title",
+          snippet: "New blog snippet",
+          body: "" 
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post(`/blogs/${id}`)
+              .send(blogUpdate)
+              .end((err, res) => {
+                res.text.should.match(/body must be 1-2000 characters long/i);
                 return agent.get(`/blogs/${id}`).end((err, res) => {
                   const oldBody = new RegExp(`${blog.body}`);
                   res.text.should.match(oldBody);
@@ -340,6 +391,8 @@ describe("App", () => {
         const blog = testBlogsArray[0];
         const id = blog._id;
         const blogUpdate = {
+          title: "New blog title",
+          snippet: "New blog snippet",
           body: "A full-bodied blog.",
         };
         agent
