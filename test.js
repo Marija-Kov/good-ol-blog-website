@@ -164,7 +164,58 @@ describe("App", () => {
           });
       });
 
-      it("should not post a blog if blog post attempt was made with invalid input", (done) => {
+      it("should show error and not post a blog if blog post attempt was made with invalid title input", (done) => {
+        const newBlog = {
+          title: "",
+          snippet: "faulty blog",
+          body: "faulty blog",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+             .post("/blogs")
+             .send(newBlog)
+             .end((err, res) => {
+              res.text.should.match(/title must be 1-50 characters/i);
+              return agent
+                .get("/blogs")
+                .end((err, res) => {
+                 const faultyBlog = new RegExp(`${newBlog.snippet}`);
+                 res.text.should.not.match(faultyBlog);
+                 done();
+                });
+             });
+          })
+        
+      });
+
+      it("should show error and not post a blog if blog post attempt was made with invalid snippet input", (done) => {
+        const newBlog = {
+          title: "faulty blog",
+          snippet: "",
+          body: "faulty blog",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+               res.text.should.match(/snippet must be 1-100 characters/i); 
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.title}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
+                });
+              });
+          });
+      });
+
+      it("should show error and not post a blog if blog post attempt was made with invalid body input", (done) => {
         const newBlog = {
           title: "faulty blog",
           snippet: "faulty blog",
@@ -175,19 +226,17 @@ describe("App", () => {
           .send({ email: testUser.email, password: testUserPassword })
           .end((err, res) => {
             return agent
-             .post("/blogs")
-             .send(newBlog)
-             .end((err, res) => {
-              return agent
-                .get("/blogs")
-                .end((err, res) => {
-                 const faultyBlog = new RegExp(`${newBlog.title}`);
-                 res.text.should.not.match(faultyBlog);
-                 done();
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                res.text.should.match(/body must be 1-2000 characters/i);
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.title}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
                 });
-             });
-          })
-        
+              });
+          });
       });
 
       it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
