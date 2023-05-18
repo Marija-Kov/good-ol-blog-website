@@ -73,6 +73,24 @@ const blog_create_post = (req, res) => {
       error: { body: "⚠Blog body must be 1-2000 characters long" } ,
     });
   }
+
+  Blog.find()
+    .then((blogs) => {
+      if (blogs.length >= 20) {
+        const id = blogs[0]._id;
+        Blog.findByIdAndDelete(id)
+          .then((result) => {
+            res.status(200);
+          })
+          .catch((error) => {
+            res.status(400).json({ error: error.message });
+          });
+      }
+    })
+    .catch((error) => {
+      res.status(400).json({ error: error.message });
+    });
+  
   const blog = new Blog(req.body); 
   blog
     .save()
