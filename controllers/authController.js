@@ -19,6 +19,26 @@ const user_signup = async (req, res, next) => {
     req.flash("error", "Password not strong enough");
     return res.status(400).redirect("/signup");
   }
+
+  User.find()
+     .then((users) => {
+       if (users.length >= 5) {
+         const id = users[0]._id;
+         User.findByIdAndDelete(id)
+           .then((result) => {
+             res.status(200);
+           })
+           .catch((error) => {
+             res.status(400).json({ error: error.message });
+             console.log(error.message)
+           });
+       }
+     })
+     .catch((error) => {
+       res.status(400).json({ error: error.message });
+       console.log(error.message);
+     });
+
   try {
     const { salt, hash } = await genPassword(req.body.password);
     const newUser = new User({
