@@ -17,9 +17,10 @@ let testUser;
 let testUserPassword = "abc";
 
 before(async () => {
+  const maxBlogsLimit = 20;
   try {
     testBlogsArray = [];
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < maxBlogsLimit-1; ++i) {
       const testBlog = new Blog({
         title: `TEST title ${i + 1}`,
         snippet: `TEST snippet ${i + 1}`,
@@ -71,7 +72,7 @@ describe("App", () => {
 
     describe("GET /:id", () => {
       it("should display 'Page not found' if the blog with the provided id doesn't exist in the database", (done) => {
-        const id = "11";
+        const id = "646724f662dbec59f6fe0c53";
         chai
           .request(app)
           .get(`/blogs/${id}`)
@@ -261,11 +262,36 @@ describe("App", () => {
               });
           });
       });
+
+      it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
+        const oldestBlogId = testBlogsArray[0]._id;
+        const secondOldestBlogId = testBlogsArray[1]._id;
+        agent
+          .post("/login")
+          .send({ email: testUser.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send({ title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" })
+              .end((err, res) => {
+                return agent.get(`/blogs/${oldestBlogId}`).end((err, res) => {
+                  res.text.should.not.match(/test title/i);
+                  res.text.should.match(/page not found/i);
+                  return agent
+                    .get(`/blogs/${secondOldestBlogId}`)
+                    .end((err, res) => {
+                      res.text.should.match(/test title 2/i);
+                      done();
+                    });
+                });
+              });
+          });
+      });
     });
 
     describe("GET /update/:id", () => {
       it("should render not-authorized message given that the user is not authorized to access blogs/update view", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         chai
           .request(app)
@@ -277,7 +303,7 @@ describe("App", () => {
       });
 
       it("should render a blog form prefilled with the existing blog content given that the user is authorized to access blogs/update view", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         agent
           .post(`/user/login`)
@@ -300,7 +326,7 @@ describe("App", () => {
 
     describe("POST /:id", () => {
       it("should render not-authorized message given that the user is not authorized to post blog updates", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = {
           body: "A full-bodied blog.",
@@ -316,7 +342,7 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid title", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { title: "Too Long Title sjhfsjhfsjhjhfkjshfsjhfsjdkfhjfhsfjhsdjkfdhsfjkshfjshdfjsdhfskjfsjhdfjskh" };
         agent
@@ -338,7 +364,7 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid snippet", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { 
           title: "New blog title",
@@ -362,7 +388,7 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid body", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { 
           title: "New blog title",
@@ -388,7 +414,7 @@ describe("App", () => {
       });
 
       it("should update a blog given that all the input is valid", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = {
           title: "New blog title",
@@ -415,7 +441,7 @@ describe("App", () => {
 
     describe("GET /delete/:id", () => {
       it("should render not-authorized message given that the user is not authorized to delete blogs", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         chai
           .request(app)
@@ -628,7 +654,7 @@ describe("App", () => {
       .request(app)
       .get('/somepage')
       .end((err, res) => {
-        res.text.should.match(/doesn't exist/i)
+        res.text.should.match(/not found/i)
         done()
       })
     })
