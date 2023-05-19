@@ -18,12 +18,18 @@ const blog_details = (req, res) => {
    const id = req.params.id;
    Blog.findById(id)
      .then(result => {
-       res
-         .status(200)
-         .render("blogs/details", { blog: result, title: "Blog Details" });
+      if (!result) {
+        res
+          .status(404)
+          .render("404", { title: "Page Not Found"});
+      } else {
+        res
+          .status(200)
+          .render("blogs/details", { blog: result, title: "Blog Details" });
+      }
      })
      .catch(error=> {
-       res.status(404).render("404", { title: "Page Not Found", message: error.message });
+       console.log(error.message)
      }); 
 };
 
