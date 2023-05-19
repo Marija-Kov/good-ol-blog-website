@@ -13,13 +13,15 @@ const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
 const { connection, User, Blog } = require("./config/database")
 
 let testBlogsArray;
-let testUser;
+let testUsersArray;
 let testUserPassword = "abc";
 
 before(async () => {
+  const maxBlogsLimit = 20;
+  const maxUsersLimit = 5;
   try {
     testBlogsArray = [];
-    for (let i = 0; i < 3; ++i) {
+    for (let i = 0; i < maxBlogsLimit-1; ++i) {
       const testBlog = new Blog({
         title: `TEST title ${i + 1}`,
         snippet: `TEST snippet ${i + 1}`,
@@ -27,11 +29,15 @@ before(async () => {
       });
       testBlogsArray.push(await testBlog.save());
     }
-    testUser = await new User({
-      email: "poozh@mail.yu",
-      hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
-      salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
-    }).save();
+    testUsersArray = [];
+    for (let i = 0; i < maxUsersLimit - 1; ++i) {
+      const testUser = new User({
+        email: `poozh${i}@mail.yu`,
+        hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
+        salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
+      });
+      testUsersArray.push(await testUser.save());
+    }
   } catch (error) {
     console.log(error);
   }
@@ -45,7 +51,7 @@ after(async () => {
      await connection.dropDatabase();
     await connection.close();
     testBlogsArray = null;
-    testUser = null;
+    testUsersArray = null;
     testUserPassword = null;
     agent.close();
   } catch (error) {
@@ -71,7 +77,7 @@ describe("App", () => {
 
     describe("GET /:id", () => {
       it("should display 'Page not found' if the blog with the provided id doesn't exist in the database", (done) => {
-        const id = "11";
+        const id = "646724f662dbec59f6fe0c53";
         chai
           .request(app)
           .get(`/blogs/${id}`)
@@ -110,9 +116,10 @@ describe("App", () => {
       it("should render 'delete' and 'edit' buttons on blog details view given that the user is authorized", (done) => {
         const blog = testBlogsArray[0];
         const id = blog._id;
+        const user = testUsersArray[testUsersArray.length - 1];
          agent
            .post(`/user/login`)
-           .send({ email: testUser.email, password: testUserPassword })
+           .send({ email: user.email, password: testUserPassword })
            .end((err, res) => {
              return agent.get(`/blogs/${id}`).end((err, res) => {
                res.text.should.match(/edit/i);
@@ -135,9 +142,10 @@ describe("App", () => {
           });
       });
       it("should render an empty blog form given that the user is authorized to access blogs/create view", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             res.text.should.match(/blog title/i);
             res.text.should.match(/blog snippet/i);
@@ -165,6 +173,7 @@ describe("App", () => {
       });
 
       it("should show error and not post a blog if blog post attempt was made with invalid title input", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
           title: "",
           snippet: "faulty blog",
@@ -172,7 +181,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
              .post("/blogs")
@@ -192,6 +201,7 @@ describe("App", () => {
       });
 
       it("should show error and not post a blog if blog post attempt was made with invalid snippet input", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
           title: "faulty blog",
           snippet: "",
@@ -199,7 +209,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post("/blogs")
@@ -216,6 +226,7 @@ describe("App", () => {
       });
 
       it("should show error and not post a blog if blog post attempt was made with invalid body input", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
           title: "faulty blog",
           snippet: "faulty blog",
@@ -223,7 +234,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post("/blogs")
@@ -240,6 +251,7 @@ describe("App", () => {
       });
 
       it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
           title: "new blog title",
           snippet: "new blog snippet",
@@ -247,7 +259,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post("/blogs")
@@ -261,11 +273,37 @@ describe("App", () => {
               });
           });
       });
+
+      it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const oldestBlogId = testBlogsArray[0]._id;
+        const secondOldestBlogId = testBlogsArray[1]._id;
+        agent
+          .post("/login")
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send({ title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" })
+              .end((err, res) => {
+                return agent.get(`/blogs/${oldestBlogId}`).end((err, res) => {
+                  res.text.should.not.match(/test title/i);
+                  res.text.should.match(/page not found/i);
+                  return agent
+                    .get(`/blogs/${secondOldestBlogId}`)
+                    .end((err, res) => {
+                      res.text.should.match(/test title 2/i);
+                      done();
+                    });
+                });
+              });
+          });
+      });
     });
 
     describe("GET /update/:id", () => {
       it("should render not-authorized message given that the user is not authorized to access blogs/update view", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         chai
           .request(app)
@@ -277,11 +315,12 @@ describe("App", () => {
       });
 
       it("should render a blog form prefilled with the existing blog content given that the user is authorized to access blogs/update view", (done) => {
-        const blog = testBlogsArray[0];
+        const user = testUsersArray[testUsersArray.length - 1];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => { 
             return agent
              .get(`/blogs/update/${id}`)
@@ -300,7 +339,7 @@ describe("App", () => {
 
     describe("POST /:id", () => {
       it("should render not-authorized message given that the user is not authorized to post blog updates", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = {
           body: "A full-bodied blog.",
@@ -316,12 +355,13 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid title", (done) => {
-        const blog = testBlogsArray[0];
+        const user = testUsersArray[testUsersArray.length - 1];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { title: "Too Long Title sjhfsjhfsjhjhfkjshfsjhfsjdkfhjfhsfjhsdjkfdhsfjkshfjshdfjsdhfskjfsjhdfjskh" };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post(`/blogs/${id}`)
@@ -338,14 +378,15 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid snippet", (done) => {
-        const blog = testBlogsArray[0];
+        const user = testUsersArray[testUsersArray.length - 1];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { 
           title: "New blog title",
           snippet: "Too Long Snippet fhsdjfhjhfjkhflashfajkfhfahfhdfkjhaskfjhafjkhafjdfhasjdlfasdkjfhasfhasfhasdlkhfksahfaksjhfjsalhfaskjdhfjkhsafjklhasksjdhfasjkfhaskjfh" };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post(`/blogs/${id}`)
@@ -362,7 +403,8 @@ describe("App", () => {
       });
 
       it("should show error and not update blog if blog update attempt was made with invalid body", (done) => {
-        const blog = testBlogsArray[0];
+        const user = testUsersArray[testUsersArray.length - 1];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = { 
           title: "New blog title",
@@ -371,7 +413,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post(`/blogs/${id}`)
@@ -388,7 +430,8 @@ describe("App", () => {
       });
 
       it("should update a blog given that all the input is valid", (done) => {
-        const blog = testBlogsArray[0];
+        const user = testUsersArray[testUsersArray.length - 1];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         const blogUpdate = {
           title: "New blog title",
@@ -397,7 +440,7 @@ describe("App", () => {
         };
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post(`/blogs/${id}`)
@@ -415,7 +458,7 @@ describe("App", () => {
 
     describe("GET /delete/:id", () => {
       it("should render not-authorized message given that the user is not authorized to delete blogs", (done) => {
-        const blog = testBlogsArray[0];
+        const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
         chai
           .request(app)
@@ -427,11 +470,12 @@ describe("App", () => {
       });
 
       it("should delete a blog given that the blog with the provided id was found", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const blog = testBlogsArray.pop();
         const id = blog._id;
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent.get(`/blogs/delete/${id}`).end((err, res) => {
               return agent.get("/blogs").end((err, res) => {
@@ -446,7 +490,7 @@ describe("App", () => {
   });
 
   describe("User routes", () => {
-    describe("POST /user/signup", () => {
+    describe.only("POST /user/signup", () => {
       it("should render error element given that email input value is invalid", (done) => {
         const input = {
           email: "keech",
@@ -463,8 +507,9 @@ describe("App", () => {
       });
 
       it("should render error element given that email already exists in the database", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const input = {
-          email: testUser.email,
+          email: user.email,
           password: "abcABC123!",
         };
         agent
@@ -504,6 +549,32 @@ describe("App", () => {
             expect(res).to.redirectTo(/login/i);
             res.text.should.match(/success/i);
             done();
+          });
+      });
+
+      it("should delete oldest account if the number of registered users goes over the limit", (done) => {
+        const oldestUser = {
+          email: testUsersArray[0].email,
+          password: testUserPassword,
+        };
+        const newUser = {
+          email: "cecee@mail.yu",
+          password: "abcABC123!",
+        };
+        agent
+          .post("/user/signup")
+          .send(newUser)
+          .end((err, res) => {
+            return agent
+              .post("/user/login")
+              .send(oldestUser)
+              .end((err, res) => {
+                expect(res).to.redirectTo(/login/i);
+                res.text.should.match(
+                  /please enter email you have signed up with/i
+                );
+                done();
+              });
           });
       });
     });
@@ -573,8 +644,9 @@ describe("App", () => {
 
     describe("GET /user/logout", () => {
       it("should redirect and render logged-out navbar given that the user logged out successfully", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         const credentials = {
-          email: testUser.email,
+          email: user.email,
           password: testUserPassword,
         };
         agent
@@ -607,9 +679,10 @@ describe("App", () => {
       });
 
       it("should show authorized user version of the about view given that the user is authorized", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
         agent
           .post(`/user/login`)
-          .send({ email: testUser.email, password: testUserPassword })
+          .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent.get("/about").end((err, res) => {
               res.text.should.match(/about us/i);
@@ -628,7 +701,7 @@ describe("App", () => {
       .request(app)
       .get('/somepage')
       .end((err, res) => {
-        res.text.should.match(/doesn't exist/i)
+        res.text.should.match(/not found/i)
         done()
       })
     })
