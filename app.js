@@ -1,33 +1,28 @@
+require('dotenv').config();
 const express = require('express');
-const morgan = require('morgan');
 const mongoose = require('mongoose');
+mongoose.set("strictQuery", false);
 const blogRoutes = require('./routes/blogRoutes');
 const userRoutes = require("./routes/userRoutes");
 const app = express();
 const expressEjsLayouts = require('express-ejs-layouts');
-require('dotenv').config(); 
+ 
 const passport = require("passport");
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
+const { session, sessionStore } = require("./config/sessionStore");
 const flash = require("connect-flash");
-mongoose.set("strictQuery", false);
 
+const morgan = require('morgan');
 app.use(express.json());  
 
-const { connection } = require("./config/database")
-
-app.set('view engine', 'ejs');  
-                          
+app.set('view engine', 'ejs');                           
 app.use(expressEjsLayouts);                         
 app.use(express.static('public'));  
-app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 
-const sessionStore = new MongoStore({
-  mongooseConnection: connection,
-  collection: 'sessions'
-});
+if(process.env.NODE_ENV === "development") {
+  app.use(morgan('dev')); 
+}
 
 app.use(
       session({
