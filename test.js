@@ -8,7 +8,7 @@ const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
 
-const { connectDB, closeDB, clearDB, addTestData } = require("./config/test/database.js");
+const { connectDB, clearAndCloseDB, addTestData } = require("./config/test/database.js");
 
 const { connection, User, Blog } = require("./config/database")
 
@@ -26,11 +26,7 @@ before(async () => {
 
 after(async () => {
   try {
-    for (const key in connection.collections) {
-      await connection.collections[key].deleteMany({});
-    }
-     await connection.dropDatabase();
-    await connection.close();
+    await clearAndCloseDB(connection)
     testBlogsArray = null;
     testUsersArray = null;
     testUserPassword = null;
