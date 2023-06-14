@@ -8,36 +8,17 @@ const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
 
-const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
+const { connectDB, closeDB, clearDB, addTestData } = require("./config/test/database.js");
 
 const { connection, User, Blog } = require("./config/database")
 
-let testBlogsArray;
-let testUsersArray;
+let testBlogsArray = [];
+let testUsersArray = [];
 let testUserPassword = "abc";
 
 before(async () => {
-  const maxBlogsLimit = 20;
-  const maxUsersLimit = 5;
   try {
-    testBlogsArray = [];
-    for (let i = 0; i < maxBlogsLimit-1; ++i) {
-      const testBlog = new Blog({
-        title: `TEST title ${i + 1}`,
-        snippet: `TEST snippet ${i + 1}`,
-        body: `TEST body ${i + 1}`,
-      });
-      testBlogsArray.push(await testBlog.save());
-    }
-    testUsersArray = [];
-    for (let i = 0; i < maxUsersLimit - 1; ++i) {
-      const testUser = new User({
-        email: `poozh${i}@mail.yu`,
-        hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
-        salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
-      });
-      testUsersArray.push(await testUser.save());
-    }
+  await addTestData(testBlogsArray, testUsersArray, User, Blog)
   } catch (error) {
     console.log(error);
   }
@@ -490,7 +471,7 @@ describe("App", () => {
   });
 
   describe("User routes", () => {
-    describe.only("POST /user/signup", () => {
+    describe("POST /user/signup", () => {
       it("should render error element given that email input value is invalid", (done) => {
         const input = {
           email: "keech",
