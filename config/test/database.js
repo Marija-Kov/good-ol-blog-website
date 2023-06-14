@@ -37,18 +37,18 @@ const addTestData = async (testBlogsArray, testUsersArray, User, Blog) => {
     }
 }
 
-const clearDB = async () => {
-  console.log(`clearDB runs`);
-  const collections = mongoose.connection.collections;
-  for (const key in collections) {
-    await collections[key].deleteMany({});
+const clearAndCloseDB = async (connection) => {
+  console.log(`clearAndCloseDB runs`);
+  for (const key in connection.collections) {
+    await connection.collections[key].deleteMany({});
   }
+  await connection.dropDatabase();
+  await connection.close();
 };
 
 const closeDB = async () => {
   console.log(`closeDB runs`)
-  await mongoose.connection.dropDatabase();
-  await mongoose.connection.close();
+
   await mongoServer.stop();
 };
 
@@ -56,6 +56,5 @@ const closeDB = async () => {
 module.exports = {
   addTestData,
   connectDB,
-  closeDB,
-  clearDB
+  clearAndCloseDB
 }
