@@ -16,7 +16,7 @@ const connectDB = async () => {
   Blog = connection.model("Blog", blogSchema);
 };
 
-const addTestData = async (testBlogsArray, testUsersArray) => {
+const addTestData = async (testBlogsArray, testUsersArray, User, Blog) => {
   const maxBlogsLimit = 20;
   const maxUsersLimit = 5;
     for (let i = 0; i < maxBlogsLimit-1; ++i) {
