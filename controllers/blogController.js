@@ -1,4 +1,6 @@
-const { Blog } = require("../config/database");
+import DB from "../config/database.js";
+import testDB from "../config/test/database.js";
+const Blog = process.env.NODE_ENV !== "test" ? DB.Blog : testDB.Blog;
 
 const blog_index = (req, res) => {
   Blog.find()
@@ -200,8 +202,7 @@ const blog_update_patch = (req, res) => {
     });
 };
 
-
-module.exports = {
+const blogController = {
     blog_index,
     blog_details,
     blog_create_get,
@@ -210,3 +211,5 @@ module.exports = {
     blog_update_get,
     blog_update_patch
 }
+
+export default blogController

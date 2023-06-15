@@ -1,6 +1,6 @@
-const express = require("express");
+import express from "express";
 const router = express.Router();
-const blogController = require('../controllers/blogController');
+import blogController from '../controllers/blogController.js';
 
 
 router.get("/", blogController.blog_index);
@@ -13,4 +13,4 @@ router.post("/:id", blogController.blog_update_patch);
 
 
 
-module.exports = router;
+export default router;

@@ -1,6 +1,8 @@
-const { User } = require("../config/database");
-const passport = require("passport");
-const { genPassword } = require("../utils/passwordUtils");
+import DB from "../config/database.js";
+import testDB from "../config/test/database.js";
+import passport from "passport";
+import { genPassword } from "../utils/passwordUtils.js";
+const User = process.env.NODE_ENV !== "test" ? DB.User : testDB.User;
 
 const user_signup = async (req, res, next) => {
   const email = req.body.email;
@@ -65,7 +67,7 @@ const user_logout = (req, res, next) => {
     })
 }
 
-module.exports = {
+export default {
   user_login,
   user_logout,
   user_signup
