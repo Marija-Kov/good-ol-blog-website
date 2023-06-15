@@ -1,7 +1,18 @@
-const passport = require("passport");
-const { verifyPassword } = require("../utils/passwordUtils");
-const LocalStrategy = require("passport-local").Strategy;
-const { User } = require('./database');
+import passport from "passport";
+import { verifyPassword } from "../utils/passwordUtils.js";
+import * as passportLocal from "passport-local";
+const LocalStrategy = passportLocal.Strategy;
+
+import DB from "./database.js";
+import testDB from "./test/database.js"
+
+let User;
+
+if(process.env.NODE_ENV !== "test"){
+   User = DB.User 
+} else {
+   User = testDB.User
+}
 
 // to verify credentials, passport will look for "username" and "password" literally, but this can be modified
 // by setting up custom fields:
