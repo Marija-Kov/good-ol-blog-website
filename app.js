@@ -1,33 +1,36 @@
-const express = require('express');
-const morgan = require('morgan');
-const mongoose = require('mongoose');
-const blogRoutes = require('./routes/blogRoutes');
-const userRoutes = require("./routes/userRoutes");
-const app = express();
-const expressEjsLayouts = require('express-ejs-layouts');
-require('dotenv').config(); 
-const passport = require("passport");
-const session = require('express-session');
-const MongoStore = require('connect-mongo')(session);
-const flash = require("connect-flash");
+import dotenv from "dotenv";
+dotenv.config();
+import express from 'express';
+import mongoose from 'mongoose';
+import DB from "./config/database.js";
+import blogRoutes from './routes/blogRoutes.js';
+import userRoutes from "./routes/userRoutes.js";
+import expressEjsLayouts from 'express-ejs-layouts';
+import passport from "passport";
+import session from 'express-session';
+import connectMongo from 'connect-mongo'
+import flash from "connect-flash";
+import morgan from 'morgan';
+
 mongoose.set("strictQuery", false);
+const app = express();
+const MongoStore = connectMongo(session);
 
 app.use(express.json());  
-
-const { connection } = require("./config/database")
-
-app.set('view engine', 'ejs');  
-                          
+app.set('view engine', 'ejs');                           
 app.use(expressEjsLayouts);                         
 app.use(express.static('public'));  
-app.use(morgan('dev')); 
 app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 
+if(process.env.NODE_ENV === "development") {
+  app.use(morgan('dev')); 
+}
+
 const sessionStore = new MongoStore({
-  mongooseConnection: connection,
-  collection: 'sessions'
-});
+    mongooseConnection: DB.connection,
+    collection: 'sessions'
+  });
 
 app.use(
       session({
@@ -41,7 +44,7 @@ app.use(
    )
 
 // REGISTER PASSPORT
-require('./config/passport');
+import('./config/passport.js');
 // keep reinitializing passport middleware as we hit different routes
 app.use(passport.initialize());
 app.use(passport.session())
@@ -95,4 +98,4 @@ function listen(){
 }
 listen()
 
-module.exports = app;
+export default app;

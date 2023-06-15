@@ -1,13 +1,10 @@
-const mongoose = require("mongoose");
-const blogSchema = require("../models/blog");
-const userSchema = require("../models/user");
-require("dotenv").config();
+import mongoose from "mongoose";
+import blogSchema from "../schemas/blog.js";
+import userSchema from "../schemas/user.js";
+import dotenv from "dotenv";
+dotenv.config()
 
-const dbURI =
-  process.env.NODE_ENV === "test"
-    ? process.env.TEST_MONGO_URI
-    : process.env.MONGO_URI; 
-const connection = mongoose.createConnection(dbURI, {
+const connection = mongoose.createConnection(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
 });
@@ -15,4 +12,10 @@ const connection = mongoose.createConnection(dbURI, {
 const User = connection.model("User", userSchema);
 const Blog = connection.model("Blog", blogSchema);
 
-module.exports = { connection, User, Blog };
+const DB = {
+  connection,
+  User,
+  Blog
+}
+
+export default DB;

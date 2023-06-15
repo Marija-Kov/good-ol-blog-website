@@ -1,43 +1,23 @@
-const app = require("./app.js");
-
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+import app from "./app.js";
+import chai from 'chai';
+import chaiHttp from 'chai-http';
 chai.use(chaiHttp);
 const agent = chai.request.agent(app);
 const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
 
-const { connectDB, closeDB, clearDB } = require("./config/test/database.js");
+import testDB from "./config/test/database.js";
 
-const { connection, User, Blog } = require("./config/database")
+// const { connection, User, Blog } = require("./config/database")
 
-let testBlogsArray;
-let testUsersArray;
+let testBlogsArray = [];
+let testUsersArray = [];
 let testUserPassword = "abc";
 
 before(async () => {
-  const maxBlogsLimit = 20;
-  const maxUsersLimit = 5;
   try {
-    testBlogsArray = [];
-    for (let i = 0; i < maxBlogsLimit-1; ++i) {
-      const testBlog = new Blog({
-        title: `TEST title ${i + 1}`,
-        snippet: `TEST snippet ${i + 1}`,
-        body: `TEST body ${i + 1}`,
-      });
-      testBlogsArray.push(await testBlog.save());
-    }
-    testUsersArray = [];
-    for (let i = 0; i < maxUsersLimit - 1; ++i) {
-      const testUser = new User({
-        email: `poozh${i}@mail.yu`,
-        hash: "$2b$12$HY8HDZvY9.TbJ7aa8JckXuYXPBQ5LCQib6wnW78G.2HgHWE0.naWS",
-        salt: "$2b$12$HY8HDZvY9.TbJ7aa8JckXu",
-      });
-      testUsersArray.push(await testUser.save());
-    }
+  await testDB.addTestData(testBlogsArray, testUsersArray)
   } catch (error) {
     console.log(error);
   }
@@ -45,11 +25,7 @@ before(async () => {
 
 after(async () => {
   try {
-    for (const key in connection.collections) {
-      await connection.collections[key].deleteMany({});
-    }
-     await connection.dropDatabase();
-    await connection.close();
+    await testDB.clearAndCloseDB()
     testBlogsArray = null;
     testUsersArray = null;
     testUserPassword = null;
@@ -490,7 +466,7 @@ describe("App", () => {
   });
 
   describe("User routes", () => {
-    describe.only("POST /user/signup", () => {
+    describe("POST /user/signup", () => {
       it("should render error element given that email input value is invalid", (done) => {
         const input = {
           email: "keech",

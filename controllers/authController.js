@@ -1,22 +1,32 @@
-const { User } = require("../config/database");
-const passport = require("passport");
-const { genPassword } = require("../utils/passwordUtils");
+import passport from "passport";
+import { genPassword } from "../utils/passwordUtils.js";
+let User;
+
+if(process.env.NODE_ENV !== "test"){
+  import("../config/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error))
+} else {
+  import("../config/test/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error));
+}
 
 const user_signup = async (req, res, next) => {
   const email = req.body.email;
   if (!email.match(/^[a-zA-Z0-9.!#$%&’*+/=?^_`{|}~-]+@[a-zA-Z0-9-]+(?:\.[a-zA-Z0-9-]+)*$/)
     ){
-    req.flash("error", "Please enter valid email");
+    req.flash("error", "⚠Please enter valid email");
     return res.status(400).redirect("/signup");
   }
   const emailExistsInDb = await User.findOne({email: email});
   if (emailExistsInDb) {
-    req.flash("error", "Email already in use");
+    req.flash("error", "⚠Email already in use");
     return res.status(400).redirect("/signup");
   }
   const password = req.body.password;
   if(password.length < 6){
-    req.flash("error", "Password not strong enough");
+    req.flash("error", "⚠Password not strong enough");
     return res.status(400).redirect("/signup");
   }
 
@@ -65,7 +75,7 @@ const user_logout = (req, res, next) => {
     })
 }
 
-module.exports = {
+export default {
   user_login,
   user_logout,
   user_signup

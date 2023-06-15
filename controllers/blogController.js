@@ -1,4 +1,13 @@
-const { Blog } = require("../config/database");
+let Blog;
+if(process.env.NODE_ENV !== "test"){
+  import("../config/database.js").then(db => {
+   Blog = db.default.Blog
+  }).catch(error => console.log(error))
+} else {
+  import("../config/test/database.js").then(db => {
+   Blog = db.default.Blog
+  }).catch(error => console.log(error));
+}
 
 const blog_index = (req, res) => {
   Blog.find()
@@ -200,8 +209,7 @@ const blog_update_patch = (req, res) => {
     });
 };
 
-
-module.exports = {
+const blogController = {
     blog_index,
     blog_details,
     blog_create_get,
@@ -210,3 +218,5 @@ module.exports = {
     blog_update_get,
     blog_update_patch
 }
+
+export default blogController
