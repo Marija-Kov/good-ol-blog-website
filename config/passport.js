@@ -3,15 +3,16 @@ import { verifyPassword } from "../utils/passwordUtils.js";
 import * as passportLocal from "passport-local";
 const LocalStrategy = passportLocal.Strategy;
 
-import DB from "./database.js";
-import testDB from "./test/database.js"
-
 let User;
 
 if(process.env.NODE_ENV !== "test"){
-   User = DB.User 
+  import("../config/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error))
 } else {
-   User = testDB.User
+  import("../config/test/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error));
 }
 
 // to verify credentials, passport will look for "username" and "password" literally, but this can be modified

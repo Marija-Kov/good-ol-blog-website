@@ -1,6 +1,13 @@
-import DB from "../config/database.js";
-import testDB from "../config/test/database.js";
-const Blog = process.env.NODE_ENV !== "test" ? DB.Blog : testDB.Blog;
+let Blog;
+if(process.env.NODE_ENV !== "test"){
+  import("../config/database.js").then(db => {
+   Blog = db.default.Blog
+  }).catch(error => console.log(error))
+} else {
+  import("../config/test/database.js").then(db => {
+   Blog = db.default.Blog
+  }).catch(error => console.log(error));
+}
 
 const blog_index = (req, res) => {
   Blog.find()

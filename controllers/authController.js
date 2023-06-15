@@ -1,8 +1,16 @@
-import DB from "../config/database.js";
-import testDB from "../config/test/database.js";
 import passport from "passport";
 import { genPassword } from "../utils/passwordUtils.js";
-const User = process.env.NODE_ENV !== "test" ? DB.User : testDB.User;
+let User;
+
+if(process.env.NODE_ENV !== "test"){
+  import("../config/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error))
+} else {
+  import("../config/test/database.js").then(db => {
+   User = db.default.User
+  }).catch(error => console.log(error));
+}
 
 const user_signup = async (req, res, next) => {
   const email = req.body.email;
