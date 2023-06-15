@@ -1,7 +1,7 @@
 import mongoose from "mongoose";
 import { MongoMemoryServer } from "mongodb-memory-server";
-import userSchema from "../../models/user.js";
-import blogSchema from "../../models/blog.js";
+import userSchema from "../../schemas/user.js";
+import blogSchema from "../../schemas/blog.js";
 
 const mongoServer = await MongoMemoryServer.create();
 const connection = mongoose.createConnection(mongoServer.getUri())

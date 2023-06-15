@@ -1,6 +1,6 @@
 import mongoose from "mongoose";
-import blogSchema from "../models/blog.js";
-import userSchema from "../models/user.js";
+import blogSchema from "../schemas/blog.js";
+import userSchema from "../schemas/user.js";
 import dotenv from "dotenv";
 dotenv.config()
 
