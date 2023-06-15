@@ -1,22 +1,14 @@
-const mongoose = require("mongoose");
-const { MongoMemoryServer } = require("mongodb-memory-server");
-const userSchema = require("../../models/user");
-const blogSchema = require("../../models/blog");
+import mongoose from "mongoose";
+import { MongoMemoryServer } from "mongodb-memory-server";
+import userSchema from "../../models/user.js";
+import blogSchema from "../../models/blog.js";
 
-let connection;
-let mongoServer;
-let User;
-let Blog;
+const mongoServer = await MongoMemoryServer.create();
+const connection = mongoose.createConnection(mongoServer.getUri())
+const User = connection.model("User", userSchema);
+const Blog = connection.model("Blog", blogSchema);
 
-const connectDB = async () => {
-  console.log(`connectDB runs`)
-  mongoServer = await MongoMemoryServer.create();
-  connection = await mongoose.connect(mongoServer.getUri(), {});
-  User = connection.model("User", userSchema);
-  Blog = connection.model("Blog", blogSchema);
-};
-
-const addTestData = async (testBlogsArray, testUsersArray, User, Blog) => {
+const addTestData = async (testBlogsArray, testUsersArray) => {
   const maxBlogsLimit = 20;
   const maxUsersLimit = 5;
     for (let i = 0; i < maxBlogsLimit-1; ++i) {
@@ -37,24 +29,22 @@ const addTestData = async (testBlogsArray, testUsersArray, User, Blog) => {
     }
 }
 
-const clearAndCloseDB = async (connection) => {
+const clearAndCloseDB = async () => {
   console.log(`clearAndCloseDB runs`);
   for (const key in connection.collections) {
     await connection.collections[key].deleteMany({});
   }
   await connection.dropDatabase();
   await connection.close();
-};
-
-const closeDB = async () => {
-  console.log(`closeDB runs`)
-
   await mongoServer.stop();
 };
 
-
-module.exports = {
+const testDB = {
+  connection,
+  User,
+  Blog,
   addTestData,
-  connectDB,
   clearAndCloseDB
 }
+
+export default testDB
