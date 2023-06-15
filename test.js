@@ -1,16 +1,15 @@
-const app = require("./app.js");
-
-const chai = require('chai');
-const chaiHttp = require('chai-http');
+import app from "./app.js";
+import chai from 'chai';
+import chaiHttp from 'chai-http';
 chai.use(chaiHttp);
 const agent = chai.request.agent(app);
 const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
 
-const { connectDB, clearAndCloseDB, addTestData } = require("./config/test/database.js");
+import testDB from "./config/test/database.js";
 
-const { connection, User, Blog } = require("./config/database")
+// const { connection, User, Blog } = require("./config/database")
 
 let testBlogsArray = [];
 let testUsersArray = [];
@@ -18,7 +17,7 @@ let testUserPassword = "abc";
 
 before(async () => {
   try {
-  await addTestData(testBlogsArray, testUsersArray, User, Blog)
+  await testDB.addTestData(testBlogsArray, testUsersArray)
   } catch (error) {
     console.log(error);
   }
@@ -26,7 +25,7 @@ before(async () => {
 
 after(async () => {
   try {
-    await clearAndCloseDB(connection)
+    await testDB.clearAndCloseDB()
     testBlogsArray = null;
     testUsersArray = null;
     testUserPassword = null;
