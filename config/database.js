@@ -4,10 +4,6 @@ import userSchema from "../models/user.js";
 import dotenv from "dotenv";
 dotenv.config()
 
-const dbURI =
-  process.env.NODE_ENV === "test"
-    ? process.env.TEST_MONGO_URI
-    : process.env.MONGO_URI; 
 const connection = mongoose.createConnection(process.env.MONGO_URI, {
   useNewUrlParser: true,
   useUnifiedTopology: true,
