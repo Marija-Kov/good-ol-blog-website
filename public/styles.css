@@ -395,10 +395,23 @@ footer {
 }
 
 @media screen and (max-width: 530px) {
+  .single::before {
+   left: 35px;
+  }
 
  .links {
    width: 100vw;
    margin: 0 auto;
  }
+
+.content {
+  padding-left: 30px;
+  margin-right: 20px;
+}
+
+.login-form-wrapper > form,
+.signup-form-wrapper > form {
+ margin: 0 30px 0 0;
+}
 
 }
