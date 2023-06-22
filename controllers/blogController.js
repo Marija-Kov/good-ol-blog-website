@@ -10,12 +10,15 @@ if(process.env.NODE_ENV !== "test"){
 }
 
 const blog_index = (req, res) => {
+  const chunks = req.query.chunks || 1;
+  const limit = chunks * 2;
   Blog.find()
     .sort({ createdAt: -1 })
-    .then(result => {
-      res  
+    .limit(limit)
+    .then(result => {  
+      res 
          .status(200)
-         .render("blogs/index", { title: "All Blogs", blogs: result })
+         .render("blogs/index", { title: "All Blogs", blogs: result, chunks: Number(chunks) + 1 })
     })
     .catch(error=> {
       res.status(400).json({ error: error.message });

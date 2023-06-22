@@ -15,5 +15,11 @@
           <% } else {%>
             <p>No blogs to display!</p>
             <% }%>
+            <form class="delete" action="/blogs?chunks=<%= chunks %>" method="GET">
+              <input type="hidden" name="chunks" value="<%= chunks %>" /> 
+              <button id="delete">Load more</button>
+            </form>         
   </div>
+  
 </div>
+ 
