@@ -58,7 +58,6 @@ input {
   flex-direction: column;
   gap: 20px;
   height: 71.5vh;
-  overflow-y: scroll;
 }
 
 .snippet {
@@ -176,7 +175,9 @@ a#discard-changes:hover {
  font-family: var(--text-primary-font);
 }
 
-.delete {
+.delete,
+.prev,
+.next {
   height: unset;
   color: var(--primary);
   background: unset;
@@ -189,7 +190,9 @@ a#discard-changes:hover {
 }
 
 a#edit,
-button#delete {
+button#delete,
+button#prev,
+button#next {
   height: 26px;  
   border: solid 1px var(--primary);
   border-radius: 2px;
@@ -207,7 +210,9 @@ a#edit {
 }
 
 a#edit:hover,
-button#delete:hover {
+button#delete:hover,
+button#prev:hover,
+button#next:hover {
   border: solid 1px var(--hover-color);
   color: var(--hover-color);
   transform: translate(1px, 1px);
@@ -395,8 +400,12 @@ footer {
 }
 
 @media screen and (max-width: 530px) {
+
+  nav {
+    height: 12vh;
+  }
   .single::before {
-   left: 30px;
+   left: 20px;
   }
 
   .single {
