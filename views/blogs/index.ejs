@@ -13,12 +13,18 @@
         </a>
         <% }) %>
           <% } else {%>
-            <p>No blogs to display!</p>
+            <p>Nothing yet to see here and onwards!</p>
             <% }%>
-            <form class="delete" action="/blogs?chunks=<%= chunks %>" method="GET">
-              <input type="hidden" name="chunks" value="<%= chunks %>" /> 
-              <button id="delete">Load more</button>
-            </form>         
+          <div class="pages">
+            <form class="prev" action="/blogs?page=<%= prevPage %>" method="GET">
+              <input type="hidden" name="page" value="<%= prevPage %>" /> 
+              <button id="prev"><<</button>
+            </form> 
+            <form class="next" action="/blogs?page=<%= nextPage %>" method="GET">
+              <input type="hidden" name="page" value="<%= nextPage %>" /> 
+              <button id="next">>></button>
+            </form>   
+          </div>
   </div>
   
 </div>
