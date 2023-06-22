@@ -9,8 +9,6 @@ const expect = chai.expect;
 
 import testDB from "./config/test/database.js";
 
-// const { connection, User, Blog } = require("./config/database")
-
 let testBlogsArray = [];
 let testUsersArray = [];
 let testUserPassword = "abc";
@@ -38,15 +36,30 @@ after(async () => {
 describe("App", () => {
   describe("Blog Routes", () => {
     describe("GET /", () => {
-      it("should get all blogs", (done) => {
+      it("should get the first page of all blogs", (done) => {
         chai
           .request(app)
           .get("/blogs")
           .end((err, res) => {
             res.text.should.match(/all blogs/i);
+            res.text.should.match(/prev/i);
+            res.text.should.match(/next/i);
             const blog = new RegExp(`${testBlogsArray[0].title}`);
             res.text.should.match(blog);
             done();
+          });
+      });
+
+      it("should go to a page by query", (done) => {
+        chai
+          .request(app)
+          .get("/blogs?page=3")
+          .end((err, res) => {
+            const blog = new RegExp(`${testBlogsArray[0].title}`);
+            res.text.should.match(blog);
+            res.text.should.match(/form class="prev" action="\/blogs\?page=2"/i);
+            res.text.should.match(/form class="next" action="\/blogs\?page=4"/i || /nothing yet/i);
+            done();   
           });
       });
     });
