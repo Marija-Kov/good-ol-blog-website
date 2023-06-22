@@ -90,9 +90,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 
 ## Todos <a name = "todos"></a>
 
-- Implement pagination, backend and frontend.
 - Populate app features and resources in readme.
-- Feature: Allow authenticated user to store blog post drafts.
 - Remove unused packages.
 
 <br>
