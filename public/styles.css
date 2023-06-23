@@ -305,6 +305,10 @@ button#edit-about:hover{
   box-shadow: 1px 1px;
 }
 
+.github-logo {
+  height: 40px;
+}
+
 /* 404 */
 
 .not-found {
