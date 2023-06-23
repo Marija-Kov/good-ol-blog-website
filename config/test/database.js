@@ -9,8 +9,8 @@ const User = connection.model("User", userSchema);
 const Blog = connection.model("Blog", blogSchema);
 
 const addTestData = async (testBlogsArray, testUsersArray) => {
-  const maxBlogsLimit = 20;
-  const maxUsersLimit = 5;
+  const maxBlogsLimit = process.env.TEST_MAX_BLOGS_LIMIT;
+  const maxUsersLimit = process.env.TEST_MAX_USERS_LIMIT;
     for (let i = 0; i < maxBlogsLimit-1; ++i) {
       const testBlog = new Blog({
         title: `TEST title ${i + 1}`,
