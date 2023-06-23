@@ -16,11 +16,11 @@
             <p>Nothing yet to see here and onwards!</p>
             <% }%>
           <div class="pages">
-            <form class="prev" action="/blogs?page=<%= prevPage %>" method="GET">
+            <form class="prev" id="<%= prevPage %>" action="/blogs?page=<%= prevPage %>" method="GET">
               <input type="hidden" name="page" value="<%= prevPage %>" /> 
               <button id="prev"><<</button>
             </form> 
-            <form class="next" action="/blogs?page=<%= nextPage %>" method="GET">
+            <form class="next" id="<%= nextPage %>" action="/blogs?page=<%= nextPage %>" method="GET">
               <input type="hidden" name="page" value="<%= nextPage %>" /> 
               <button id="next">>></button>
             </form>   
