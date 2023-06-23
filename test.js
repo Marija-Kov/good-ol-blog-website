@@ -41,24 +41,32 @@ describe("App", () => {
           .request(app)
           .get("/blogs")
           .end((err, res) => {
-            res.text.should.match(/all blogs/i);
-            res.text.should.match(/prev/i);
-            res.text.should.match(/next/i);
-            const blog = new RegExp(`${testBlogsArray[0].title}`);
+            const newestBlogIndex = testBlogsArray.length - 1;
+            const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`); 
+            res.text.should.match(/class="prev" id="0"/i);
+            res.text.should.match(/class="next" id="2"/i);
             res.text.should.match(blog);
             done();
           });
       });
 
-      it("should go to a page by query", (done) => {
+      it("should go to page by query", (done) => {
+        const page = 2;
+        const perPage = process.env.PER_PAGE_LIMIT;
+        const diff = (page-1) * perPage; // diff: index difference between the newest blog on page 1 and the newest blog on page number 'page'
         chai
           .request(app)
-          .get("/blogs?page=3")
+          .get(`/blogs?page=${page}`)
           .end((err, res) => {
-            const blog = new RegExp(`${testBlogsArray[0].title}`);
-            res.text.should.match(blog);
-            res.text.should.match(/form class="prev" action="\/blogs\?page=2"/i);
-            res.text.should.match(/form class="next" action="\/blogs\?page=4"/i || /nothing yet/i);
+            const newestBlogIndex = testBlogsArray.length - 1;
+            const blog = testBlogsArray[newestBlogIndex - diff] ? 
+            new RegExp(`${testBlogsArray[newestBlogIndex - diff].title}`) :
+            null; 
+            const prevPage = new RegExp(`class="prev" id="${page-1}"`);
+            const nextPage = new RegExp(`class="next" id="${page+1}"`)
+            res.text.should.match(blog || /nothing yet/i);
+            res.text.should.match(prevPage);
+            res.text.should.match(nextPage);
             done();   
           });
       });
