@@ -30,9 +30,10 @@ const user_signup = async (req, res, next) => {
     return res.status(400).redirect("/signup");
   }
 
+  const maxUsers = process.env.NODE_ENV !== 'test' ? process.env.MAX_USERS_LIMIT : process.env.TEST_MAX_USERS_LIMIT;
   User.find()
      .then((users) => {
-       if (users.length >= 5) {
+       if (users.length >= maxUsers) {
          const id = users[0]._id;
          User.findByIdAndDelete(id)
            .then((result) => {

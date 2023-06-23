@@ -11,7 +11,7 @@ if(process.env.NODE_ENV !== "test"){
 
 const blog_index = (req, res) => {
   const page = Number(req.query.page) || Number(req.query.nextPage) || Number(req.query.prevPage) || 1;
-  const limit = 4;
+  const limit = process.env.PER_PAGE_LIMIT;
   const offset = (page - 1) * limit;
   Blog.find()
     .sort({ createdAt: -1 })
@@ -93,10 +93,10 @@ const blog_create_post = (req, res) => {
       error: { body: "⚠Blog body must be 1-2000 characters long" } ,
     });
   }
-
+  const maxBlogs = process.env.NODE_ENV !== 'test' ? process.env.MAX_BLOGS_LIMIT : process.env.TEST_MAX_BLOGS_LIMIT;
   Blog.find()
     .then((blogs) => {
-      if (blogs.length >= 20) {
+      if (blogs.length >= maxBlogs) {
         const id = blogs[0]._id;
         Blog.findByIdAndDelete(id)
           .then((result) => {
