@@ -70,6 +70,7 @@ describe("App", () => {
             done();   
           });
       });
+
     });
 
     describe("GET /:id", () => {
@@ -484,6 +485,26 @@ describe("App", () => {
           });
       });
     });
+
+    describe("Any blog route", () => {
+      it("should send error if the number of requests reaches the limit", (done) => {
+        let limit = process.env.TEST_MAX_API_BLOGS_REQS;
+        for(let i = 0; i <= limit; ++i){
+          chai
+          .request(app)
+          .get("/blogs")
+          .end((err, res) => {})
+        }
+        chai
+        .request(app)
+        .get("/blogs")
+        .end((err, res) => {
+          res.text.should.match(/too many blog requests/i);
+          done(); 
+        })
+          
+      })
+    })
   });
 
   describe("User routes", () => {
@@ -660,6 +681,30 @@ describe("App", () => {
           });
       });
     });
+
+    describe("Any user route", () => {
+      it("should send error if the number of requests reaches the limit", (done) => {
+        const credentials = {
+          email: "some@email.yu",
+          password: "abcABC123!",
+        };
+        const limit = process.env.TEST_MAX_API_USER_REQS;
+        for(let i = 0; i <= limit; ++i){
+          agent
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {})
+        }
+        agent
+        .post(`/user/login`)
+        .send(credentials)
+        .end((err, res) => {
+          res.text.should.match(/too many login\/signup requests/i);
+          done();
+        })
+
+      })
+    })
   });
 
   describe("About route", () => {
