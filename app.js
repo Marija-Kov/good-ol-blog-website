@@ -6,6 +6,7 @@ import DB from "./config/database.js";
 import blogRoutes from './routes/blogRoutes.js';
 import userRoutes from "./routes/userRoutes.js";
 import expressEjsLayouts from 'express-ejs-layouts';
+import { api_user_limiter, api_blogs_limiter } from "./config/rateLimiters.js"
 import passport from "passport";
 import session from 'express-session';
 import connectMongo from 'connect-mongo'
@@ -84,6 +85,8 @@ app.get("/login", (req, res) => {
   res.render("users/login", { title: "Log In" });
 });
 
+app.use('/blogs', api_blogs_limiter);
+app.use('/user', api_user_limiter)
 app.use('/blogs', blogRoutes);
 app.use("/user", userRoutes);
 
