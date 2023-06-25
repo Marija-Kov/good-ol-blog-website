@@ -248,30 +248,6 @@ describe("App", () => {
           });
       });
 
-      it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
-        const newBlog = {
-          title: "new blog title",
-          snippet: "new blog snippet",
-          body: "new blog body",
-        };
-        agent
-          .post(`/user/login`)
-          .send({ email: user.email, password: testUserPassword })
-          .end((err, res) => {
-            return agent
-              .post("/blogs")
-              .send(newBlog)
-              .end((err, res) => {
-                return agent.get("/blogs").end((err, res) => {
-                  const blogPosted = new RegExp(`${newBlog.title}`);
-                  res.text.should.match(blogPosted);
-                  done();
-                });
-              });
-          });
-      });
-
       it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
         const user = testUsersArray[testUsersArray.length - 1];
         const oldestBlogId = testBlogsArray[0]._id;
@@ -300,6 +276,32 @@ describe("App", () => {
               });
           });
       });
+
+      it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const newBlog = {
+          title: "new blog title",
+          snippet: "new blog snippet",
+          body: "new blog body",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                return agent.get("/blogs").end((err, res) => {
+                  const blogPosted = new RegExp(`${newBlog.title}`);
+                  res.text.should.match(blogPosted);
+                  done();
+                });
+              });
+          });
+      });
+
+      
     });
 
     describe("GET /update/:id", () => {
