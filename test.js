@@ -275,22 +275,25 @@ describe("App", () => {
       it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
         const user = testUsersArray[testUsersArray.length - 1];
         const oldestBlogId = testBlogsArray[0]._id;
+        const oldestBlogTitle = new RegExp(`${testBlogsArray[0].title}`);
         const secondOldestBlogId = testBlogsArray[1]._id;
+        const secondOldestBlogTitle = new RegExp(`${testBlogsArray[1].title}`);
+        const newBlog = { title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" };
         agent
           .post("/login")
           .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
               .post("/blogs")
-              .send({ title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" })
+              .send(newBlog)
               .end((err, res) => {
                 return agent.get(`/blogs/${oldestBlogId}`).end((err, res) => {
-                  res.text.should.not.match(/test title/i);
+                  res.text.should.not.match(oldestBlogTitle);
                   res.text.should.match(/page not found/i);
                   return agent
                     .get(`/blogs/${secondOldestBlogId}`)
                     .end((err, res) => {
-                      res.text.should.match(/test title 2/i);
+                      res.text.should.match(secondOldestBlogTitle);
                       done();
                     });
                 });
