@@ -248,6 +248,35 @@ describe("App", () => {
           });
       });
 
+      it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const oldestBlogId = testBlogsArray[0]._id;
+        const oldestBlogTitle = new RegExp(`${testBlogsArray[0].title}`);
+        const secondOldestBlogId = testBlogsArray[1]._id;
+        const secondOldestBlogTitle = new RegExp(`${testBlogsArray[1].title}`);
+        const newBlog = { title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" };
+        agent
+          .post("/login")
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                return agent.get(`/blogs/${oldestBlogId}`).end((err, res) => {
+                  res.text.should.not.match(oldestBlogTitle);
+                  res.text.should.match(/page not found/i);
+                  return agent
+                    .get(`/blogs/${secondOldestBlogId}`)
+                    .end((err, res) => {
+                      res.text.should.match(secondOldestBlogTitle);
+                      done();
+                    });
+                });
+              });
+          });
+      });
+
       it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
         const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
@@ -272,31 +301,7 @@ describe("App", () => {
           });
       });
 
-      it("should delete oldest blog if number of blogs in database exceeds the limit", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
-        const oldestBlogId = testBlogsArray[0]._id;
-        const secondOldestBlogId = testBlogsArray[1]._id;
-        agent
-          .post("/login")
-          .send({ email: user.email, password: testUserPassword })
-          .end((err, res) => {
-            return agent
-              .post("/blogs")
-              .send({ title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" })
-              .end((err, res) => {
-                return agent.get(`/blogs/${oldestBlogId}`).end((err, res) => {
-                  res.text.should.not.match(/test title/i);
-                  res.text.should.match(/page not found/i);
-                  return agent
-                    .get(`/blogs/${secondOldestBlogId}`)
-                    .end((err, res) => {
-                      res.text.should.match(/test title 2/i);
-                      done();
-                    });
-                });
-              });
-          });
-      });
+      
     });
 
     describe("GET /update/:id", () => {
@@ -583,6 +588,7 @@ describe("App", () => {
           .post("/user/signup")
           .send(newUser)
           .end((err, res) => {
+            testUsersArray.shift()
             return agent
               .post("/user/login")
               .send(oldestUser)
@@ -630,7 +636,7 @@ describe("App", () => {
 
       it("should render error element given that the password is wrong", (done) => {
         const credentials = {
-          email: "sorkor@pimpim.pij",
+          email: testUsersArray[0].email,
           password: "ab",
         };
         agent
@@ -645,8 +651,8 @@ describe("App", () => {
 
       it("should redirect to a protected view given that user credentials are valid", (done) => {
         const credentials = {
-          email: "sorkor@pimpim.pij",
-          password: "abcABC123!",
+          email: testUsersArray[0].email,
+          password: testUserPassword,
         };
           agent 
             .post(`/user/login`)
@@ -662,7 +668,7 @@ describe("App", () => {
 
     describe("GET /user/logout", () => {
       it("should redirect and render logged-out navbar given that the user logged out successfully", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
+        const user = testUsersArray[0];
         const credentials = {
           email: user.email,
           password: testUserPassword,
@@ -721,7 +727,7 @@ describe("App", () => {
       });
 
       it("should show authorized user version of the about view given that the user is authorized", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
+        const user = testUsersArray[0];
         agent
           .post(`/user/login`)
           .send({ email: user.email, password: testUserPassword })
