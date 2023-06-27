@@ -588,6 +588,7 @@ describe("App", () => {
           .post("/user/signup")
           .send(newUser)
           .end((err, res) => {
+            testUsersArray.shift()
             return agent
               .post("/user/login")
               .send(oldestUser)
@@ -635,7 +636,7 @@ describe("App", () => {
 
       it("should render error element given that the password is wrong", (done) => {
         const credentials = {
-          email: "sorkor@pimpim.pij",
+          email: testUsersArray[0].email,
           password: "ab",
         };
         agent
@@ -650,8 +651,8 @@ describe("App", () => {
 
       it("should redirect to a protected view given that user credentials are valid", (done) => {
         const credentials = {
-          email: "sorkor@pimpim.pij",
-          password: "abcABC123!",
+          email: testUsersArray[0].email,
+          password: testUserPassword,
         };
           agent 
             .post(`/user/login`)
@@ -667,7 +668,7 @@ describe("App", () => {
 
     describe("GET /user/logout", () => {
       it("should redirect and render logged-out navbar given that the user logged out successfully", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
+        const user = testUsersArray[0];
         const credentials = {
           email: user.email,
           password: testUserPassword,
@@ -726,7 +727,7 @@ describe("App", () => {
       });
 
       it("should show authorized user version of the about view given that the user is authorized", (done) => {
-        const user = testUsersArray[testUsersArray.length - 1];
+        const user = testUsersArray[0];
         agent
           .post(`/user/login`)
           .send({ email: user.email, password: testUserPassword })
