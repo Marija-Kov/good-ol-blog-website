@@ -1,5 +1,8 @@
-<h1 align="center">Good Ol' Blog</h1>
-<h3 align="center">A CRUD app built with NodeJS, EJS and MongoDB using MVC design pattern</h3>
+<h1 align="center"><a href ="https://keech-writes-things.onrender.com">Good Ol' Blog</a></h1>
+<h3>
+ ATTENTION: This app may take a couple of minutes to load due to <a href = "https://render.com/docs/free#spinning-down-on-idle">the limitations of Render's Free web service</a>. 
+ Thank you for your patience!
+</h3>
 <br>
 <div align="center"><img src="" alt="a nice preview of the app should be here" /></div> 
 <br>
@@ -8,7 +11,7 @@
 
 ## Table of Contents
 
-1. [Why would you build a MVC blog from scratch?](#motivation)
+1. [Technical overview](#overview)
 2. [App Features](#features)
 3. [Tools and Dependencies](#tools)
 4. [Test coverage](#test)
@@ -20,13 +23,12 @@
 ---
 <br>
 
-## Whyyy? <a name = "motivation"></a>
+## Technical overview <a name = "overview"></a>
 
-Working on this project, one can learn how separation of concerns inside a system is achieved with the MVC pattern. 
+A CRUD app using MVC architecture pattern to achieve separation of concerns.
 It shows how a templating language is used to build user interfaces.
 It demonstrates some mechanisms of sending data from the server to views and the convenience of local variables for displaying up-to-date content. 
-It implements a widely-used authentication middleware.
-It's a fun exercise for one's backend skills. 
+It implements a widely-used authentication middleware and rate-limiter.
 
 <br>
 
@@ -45,6 +47,7 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 
 - [NodeJS](https://nodejs.org/en/) - Server logic
 - [Express](https://expressjs.com/) - Routing
+- [Express rate limit](https://github.com/express-rate-limit/express-rate-limit) - Request rate limiting
 - [EJS](https://ejs.co/) - Templating
 - [MongoDB](https://account.mongodb.com/account/login) - Database
 - [Mongoose](https://mongoosejs.com/) - MongoDB document modelling
@@ -90,7 +93,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 
 ## Todos <a name = "todos"></a>
 
-- Populate app features and resources in readme.
+- Populate app resources in readme.
 - Remove unused packages.
 
 <br>
