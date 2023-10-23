@@ -49,6 +49,7 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 - [Express](https://expressjs.com/) - Routing
 - [Express rate limit](https://github.com/express-rate-limit/express-rate-limit) - Request rate limiting
 - [EJS](https://ejs.co/) - Templating
+- [Express EJS layouts](https://www.npmjs.com/package/express-ejs-layouts) - Building reusable layouts
 - [MongoDB](https://account.mongodb.com/account/login) - Database
 - [Mongoose](https://mongoosejs.com/) - MongoDB document modelling
 - [Dotenv](https://www.npmjs.com/package/dotenv) - secret-keeping
@@ -60,8 +61,8 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 #### Dev Dependencies
 
 - [Mocha](https://jestjs.io/) - Javascript testing framework
-- [Chai](https://github.com/ladjs/supertest) - testing library
-- [Chai-http](https://github.com/ladjs/supertest) - testing HTTP requests
+- [Chai](https://www.chaijs.com/) - testing library
+- [Chai-http](https://www.chaijs.com/plugins/chai-http/) - testing HTTP requests
 - [MongoDB Memory Server](https://github.com/nodkz/mongodb-memory-server) - testing/mocking MongoDB memory server in NodeJS
 - [mongodb](https://www.npmjs.com/package/mongodb/v/3.7.3) - MongoDB driver for NodeJS
 - [nyc](https://www.npmjs.com/package/nyc) - test coverage report
@@ -94,7 +95,6 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 ## Todos <a name = "todos"></a>
 
 - Populate app resources in readme.
-- Remove unused packages.
 
 <br>
 
