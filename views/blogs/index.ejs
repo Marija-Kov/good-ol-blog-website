@@ -15,17 +15,50 @@
           <% } else {%>
             <p>Nothing yet to see here and onwards!</p>
             <% }%>
-          <div class="pages">
-            <form class="prev" id="<%= prevPage %>" action="/blogs?page=<%= prevPage %>" method="GET">
-              <input type="hidden" name="page" value="<%= prevPage %>" /> 
-              <button id="prev"><<</button>
-            </form> 
-            <form class="next" id="<%= nextPage %>" action="/blogs?page=<%= nextPage %>" method="GET">
-              <input type="hidden" name="page" value="<%= nextPage %>" /> 
-              <button id="next">>></button>
-            </form>   
+          <div class="pages"> 
+            <button id="load-more">LOAD MORE</button>
           </div>
   </div>
-  
+  <script>
+  const loadMore = document.querySelector('#load-more');
+  const loadNextPage = loadMoreBlogs(1)
+  loadMore.addEventListener("click", loadNextPage)
+  function loadMoreBlogs(firstPage){
+    let currentPage = firstPage;
+    return async function loadNextPage(){
+      const response = await fetch(`http://localhost:3002/blogs/load-more`, {
+      method: "POST",
+      body: JSON.stringify({
+        currentPage
+      }),
+      headers: {
+        "Content-Type": "application/json"
+      }
+    });
+    if(!response){
+      console.log("COULD NOT GET RESPONSE")
+      return
+    }
+    const json = await response.json();
+    const blogs = json.blogs;
+    const blogsDiv = document.querySelector('.blogs');
+    blogs.map(b => {
+      const blogElement = document.createElement('a');
+      blogElement.classList.add('single');
+      blogElement.href = `/blogs/${b._id}`;
+      blogElement.innerHTML = `
+        <h3 class="title">
+          ${b.title}
+        </h3>
+        <p class="snippet">
+          ${b.snippet}
+        </p>
+      `;
+      blogsDiv.appendChild(blogElement);
+    })
+    currentPage = json.currentPage
+    }
+  }
+  </script>
 </div>
  
