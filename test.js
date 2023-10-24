@@ -43,34 +43,29 @@ describe("App", () => {
           .end((err, res) => {
             const newestBlogIndex = testBlogsArray.length - 1;
             const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`); 
-            res.text.should.match(/class="prev" id="0"/i);
-            res.text.should.match(/class="next" id="2"/i);
+            res.text.should.match(/load more/i);
             res.text.should.match(blog);
             done();
           });
       });
+    });
 
-      it("should go to page by query", (done) => {
-        const page = 2;
-        const perPage = process.env.PER_PAGE_LIMIT;
-        const diff = (page-1) * perPage; // diff: index difference between the newest blog on page 1 and the newest blog on page number 'page'
+    describe("POST /load-more", () => {
+      it("should load more blogs by clicking on 'load more' button", (done) => {
         chai
           .request(app)
-          .get(`/blogs?page=${page}`)
+          .get("/blogs")
           .end((err, res) => {
-            const newestBlogIndex = testBlogsArray.length - 1;
-            const blog = testBlogsArray[newestBlogIndex - diff] ? 
-            new RegExp(`${testBlogsArray[newestBlogIndex - diff].title}`) :
-            null; 
-            const prevPage = new RegExp(`class="prev" id="${page-1}"`);
-            const nextPage = new RegExp(`class="next" id="${page+1}"`)
-            res.text.should.match(blog || /nothing yet/i);
-            res.text.should.match(prevPage);
-            res.text.should.match(nextPage);
-            done();   
+            return chai
+              .request(app)
+              .post("/blogs/load-more")
+              .send({currentPage: 1})
+              .end((err, res) => {
+                expect(Boolean(res._body.blogs)).to.be.true;
+                done();   
+              });  
           });
       });
-
     });
 
     describe("GET /:id", () => {
