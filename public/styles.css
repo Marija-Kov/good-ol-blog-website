@@ -46,7 +46,6 @@ input {
 
 .content {
   padding-left: 50px;
-  height: fit-content;
 }
 
 /* ---- Views ---- */
@@ -57,7 +56,13 @@ input {
   display: flex;
   flex-direction: column;
   gap: 20px;
-  height: 71.5vh;
+  padding-bottom: 20px;
+  height: fit-content;
+  transition: 0.5s;
+}
+
+.blogs:last-child {
+ padding-bottom: 190px;
 }
 
 .snippet {
