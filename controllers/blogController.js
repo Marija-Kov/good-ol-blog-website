@@ -17,7 +17,7 @@ const blog_index = (req, res) => {
     .then(result => {  
       res 
          .status(200)
-         .render("blogs/index", { title: "All Blogs", blogs: result })
+         .render("blogs/index", { title: "All Blogs", blogs: result, host: process.env.HOST })
     })
     .catch(error=> {
       res.status(400).json({ error: error.message });
