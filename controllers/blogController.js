@@ -10,23 +10,39 @@ if(process.env.NODE_ENV !== "test"){
 }
 
 const blog_index = (req, res) => {
-  const page = Number(req.query.page) || Number(req.query.nextPage) || Number(req.query.prevPage) || 1;
   const limit = process.env.PER_PAGE_LIMIT;
-  const offset = (page - 1) * limit;
   Blog.find()
     .sort({ createdAt: -1 })
     .limit(limit)
-    .skip(offset) 
     .then(result => {  
       res 
          .status(200)
-         .render("blogs/index", { title: "All Blogs", blogs: result, nextPage: page + 1,  prevPage: page - 1, limit: limit })
+         .render("blogs/index", { title: "All Blogs", blogs: result })
     })
     .catch(error=> {
       res.status(400).json({ error: error.message });
       console.log(`Error: ${error.message}`);
     });
 };
+
+const blog_load_more = (req, res) => {
+  const page = req.body.currentPage;
+  const limit = process.env.PER_PAGE_LIMIT;
+  const offset = page * limit;
+  Blog.find()
+    .sort({ createdAt: -1 })
+    .limit(limit)
+    .skip(offset) 
+    .then(result => {  
+      res 
+        .status(200)
+        .json({blogs: result, currentPage: page + 1})
+    })
+    .catch(error=> {
+      res.status(400).json({ error: error.message });
+      console.log(`Error: ${error.message}`);
+    });
+}
    
 const blog_details = (req, res) => {
    const id = req.params.id;
@@ -216,6 +232,7 @@ const blog_update_patch = (req, res) => {
 
 const blogController = {
     blog_index,
+    blog_load_more,
     blog_details,
     blog_create_get,
     blog_create_post,

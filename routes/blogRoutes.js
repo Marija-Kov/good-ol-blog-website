@@ -4,6 +4,7 @@ import blogController from '../controllers/blogController.js';
 
 
 router.get("/", blogController.blog_index);
+router.post("/load-more", blogController.blog_load_more)
 router.post("/", blogController.blog_create_post);
 router.get("/create", blogController.blog_create_get);
 router.get("/:id", blogController.blog_details);
