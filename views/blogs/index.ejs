@@ -15,8 +15,10 @@
           <% } else {%>
             <p>Nothing yet to see here and onwards!</p>
             <% }%>
+            <div class="scroll-down-pointer"></div>
   </div>
   <script>
+  window.scrollTo({top: 0, behavior: 'instant'});
   const loadNextPage = loadMoreBlogs(1);
   const content = document.querySelector(".content");
   content.style.minHeight = window.innerWidth > 530 ? "105vh" : "110vh";

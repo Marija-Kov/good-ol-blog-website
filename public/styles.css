@@ -104,6 +104,53 @@ h2 {
   margin: 10px;
 }
 
+.scroll-down-pointer {
+ position: fixed;
+ bottom: 40px;
+ z-index: -1;
+ right: 50%;
+ border: solid 2px white;
+ border-top: solid 8px white;
+ border-bottom: none;
+ border-radius: 2px;
+ height: 80px;
+ width: 8px;
+ animation: movement 2s infinite;
+}
+
+.scroll-down-pointer::before {
+  content: "";
+  height: 20px;
+  position: relative;
+  top: 100px;
+  left: -2px;
+  border: solid 4px rgba(255, 255, 255, 0);
+  border-top: solid 30px white;
+}
+
+.scroll-down-pointer::after {
+  content: "";
+  position: relative;
+  left: -3px;
+  top: 5px;
+  border: solid 4px rgba(255, 255, 255, 0);
+  border-right: solid 2px white;
+  border-top: solid 10px white;
+  border-radius: 2px;
+}
+
+@keyframes movement {
+  0% {
+    transform: translateY(-10px)
+  }
+  50% {
+    transform: translateY(30px)
+  }
+  100% {
+    transform: translateY(-10px)
+  }
+}
+
 /* Create + Update */
 
 .create-blog,
@@ -441,6 +488,10 @@ footer {
   min-width: unset;
   max-width: unset;
   width: 90%;
+}
+
+.scroll-down-pointer::before {
+  left: -1.5px;
 }
 
 }
