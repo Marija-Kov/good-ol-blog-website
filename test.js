@@ -44,6 +44,7 @@ describe("App", () => {
             const newestBlogIndex = testBlogsArray.length - 1;
             const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`); 
             res.text.should.match(blog);
+            res.text.should.match(".scroll-down-pointer");
             done();
           });
       });
