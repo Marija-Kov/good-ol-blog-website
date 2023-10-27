@@ -18,7 +18,7 @@
             <div class="scroll-down-pointer"></div>
   </div>
   <script>
-  window.scrollTo({top: 0, behavior: 'instant'});
+  window.onbeforeunload = () => window.scrollTo(0, 0);
   const loadNextPage = loadMoreBlogs(1);
   const content = document.querySelector(".content");
   content.style.minHeight = window.innerWidth > 530 ? "105vh" : "110vh";
