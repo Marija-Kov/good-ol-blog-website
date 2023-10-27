@@ -94,7 +94,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 
 ## Todos <a name = "todos"></a>
 
-- Populate app resources in readme.
+- Test client-side logic;
 
 <br>
 

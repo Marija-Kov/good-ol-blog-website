@@ -43,7 +43,6 @@ describe("App", () => {
           .end((err, res) => {
             const newestBlogIndex = testBlogsArray.length - 1;
             const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`); 
-            res.text.should.match(/load more/i);
             res.text.should.match(blog);
             done();
           });
@@ -51,7 +50,7 @@ describe("App", () => {
     });
 
     describe("POST /load-more", () => {
-      it("should load more blogs by clicking on 'load more' button", (done) => {
+      it("should load more blogs by srolling down", (done) => {
         chai
           .request(app)
           .get("/blogs")
