@@ -14,10 +14,11 @@
 1. [Technical overview](#overview)
 2. [App Features](#features)
 3. [Tools and Dependencies](#tools)
-4. [Test coverage](#test)
-5. [Todos](#todos)
-6. [Resources](#resources)
-7. [Author](#author)
+4. [Environment variables](#environment-variables)
+5. [Test coverage](#test)
+6. [Todos](#todos)
+7. [Resources](#resources)
+8. [Author](#author)
 
 
 ---
@@ -34,11 +35,12 @@ It implements a widely-used authentication middleware and rate-limiter.
 
 ## App Features <a name = "features"></a>
 
-A guest user has a read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
+Index page shows a list of blogs/links. Scrolling down the page will send requests to the server and load more blogs in chunks.
+Guest users have read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
 
 Immediately upon signing up, a user document is created in the database and the user can log in into their account and see authenticated-user-only content.
 
-An authenticated user can (for the time limited by the validity of the session cookie) post and edit blogs (and will be able to edit about me content). The user can log out manually or they will be logged out automatically when the cookie expires. 
+Authenticated users can (for the time limited by the validity of the session cookie) post and edit blogs (and will be able to edit about me content). The user can log out manually or they will be logged out automatically when the cookie expires. 
 Any attempts to perform authenticated-user-only actions upon token expiration will be followed by redirection to the page with error message and automatic redirection to the index.
 
 <br>
@@ -69,6 +71,35 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 
 <br>
 
+## Environment variables <a name = "environment-variables"></a>
+If you want to run the app in your local environment, you'll need to create a .env file in the root directory and provide values for the variables below.<br><br>
+MONGO_URI= <br>
+TEST_MONGO_URI= <br>
+SECRET=<br>
+HOST=<br>
+TEST_PORT=<br>
+PORT=<br>
+DOMAIN=<br>
+PER_PAGE_LIMIT=<br>
+TEST_MAX_USERS_LIMIT=<br>
+TEST_MAX_BLOGS_LIMIT=<br>
+MAX_USERS_LIMIT=<br>
+MAX_BLOGS_LIMIT=<br>
+
+#Keep in mind the number of user and blog route tests when you're setting test rate limit.<br>
+MAX_API_USER_REQS=<br>
+TEST_MAX_API_USER_REQS=<br>
+
+API_USER_WINDOW_MS=<br>
+TEST_API_USER_WINDOW_MS=<br>
+
+MAX_API_BLOGS_REQS=<br>
+TEST_MAX_API_BLOGS_REQS=<br>
+
+API_BLOGS_WINDOW_MS=<br>
+TEST_API_BLOGS_WINDOW_MS=<br>
+<br>
+
 ## Test coverage <a name = "test"></a>
 
 
@@ -95,6 +126,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 ## Todos <a name = "todos"></a>
 
 - Test client-side logic;
+- Blog chunks should be showing in consistent style. As is, the first chunk to load on scroll is not animated;
 
 <br>
 
