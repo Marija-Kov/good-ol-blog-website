@@ -1,6 +1,6 @@
 import app from "./app.js";
-import chai from 'chai';
-import chaiHttp from 'chai-http';
+import chai from "chai";
+import chaiHttp from "chai-http";
 chai.use(chaiHttp);
 const agent = chai.request.agent(app);
 const assert = chai.assert;
@@ -15,7 +15,7 @@ let testUserPassword = "abc";
 
 before(async () => {
   try {
-  await testDB.addTestData(testBlogsArray, testUsersArray)
+    await testDB.addTestData(testBlogsArray, testUsersArray);
   } catch (error) {
     console.log(error);
   }
@@ -23,7 +23,7 @@ before(async () => {
 
 after(async () => {
   try {
-    await testDB.clearAndCloseDB()
+    await testDB.clearAndCloseDB();
     testBlogsArray = null;
     testUsersArray = null;
     testUserPassword = null;
@@ -42,9 +42,9 @@ describe("App", () => {
           .get("/blogs")
           .end((err, res) => {
             const newestBlogIndex = testBlogsArray.length - 1;
-            const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`); 
+            const blog = new RegExp(`${testBlogsArray[newestBlogIndex].title}`);
             res.text.should.match(blog);
-            console.log(res.text)
+            console.log(res.text);
             res.text.should.match(/scroll-down-pointer/);
             done();
           });
@@ -60,11 +60,11 @@ describe("App", () => {
             return chai
               .request(app)
               .post("/blogs/load-more")
-              .send({currentPage: 1})
+              .send({ currentPage: 1 })
               .end((err, res) => {
                 expect(Boolean(res._body.blogs)).to.be.true;
-                done();   
-              });  
+                done();
+              });
           });
       });
     });
@@ -111,17 +111,16 @@ describe("App", () => {
         const blog = testBlogsArray[0];
         const id = blog._id;
         const user = testUsersArray[testUsersArray.length - 1];
-         agent
-           .post(`/user/login`)
-           .send({ email: user.email, password: testUserPassword })
-           .end((err, res) => {
-             return agent.get(`/blogs/${id}`).end((err, res) => {
-               res.text.should.match(/edit/i);
-               res.text.should.match(/delete/i);
-               done();
-             });
-           });
-        
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent.get(`/blogs/${id}`).end((err, res) => {
+              res.text.should.match(/edit/i);
+              res.text.should.match(/delete/i);
+              done();
+            });
+          });
       });
     });
 
@@ -178,20 +177,17 @@ describe("App", () => {
           .send({ email: user.email, password: testUserPassword })
           .end((err, res) => {
             return agent
-             .post("/blogs")
-             .send(newBlog)
-             .end((err, res) => {
-              res.text.should.match(/title must be 1-50 characters/i);
-              return agent
-                .get("/blogs")
-                .end((err, res) => {
-                 const faultyBlog = new RegExp(`${newBlog.snippet}`);
-                 res.text.should.not.match(faultyBlog);
-                 done();
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                res.text.should.match(/title must be 1-50 characters/i);
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.snippet}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
                 });
-             });
-          })
-        
+              });
+          });
       });
 
       it("should show error and not post a blog if blog post attempt was made with invalid snippet input", (done) => {
@@ -209,7 +205,7 @@ describe("App", () => {
               .post("/blogs")
               .send(newBlog)
               .end((err, res) => {
-               res.text.should.match(/snippet must be 1-100 characters/i); 
+                res.text.should.match(/snippet must be 1-100 characters/i);
                 return agent.get("/blogs").end((err, res) => {
                   const faultyBlog = new RegExp(`${newBlog.title}`);
                   res.text.should.not.match(faultyBlog);
@@ -250,7 +246,11 @@ describe("App", () => {
         const oldestBlogTitle = new RegExp(`${testBlogsArray[0].title}`);
         const secondOldestBlogId = testBlogsArray[1]._id;
         const secondOldestBlogTitle = new RegExp(`${testBlogsArray[1].title}`);
-        const newBlog = { title: "MAX OUT", snippet: "MAX OUT", body: "MAX OUT" };
+        const newBlog = {
+          title: "MAX OUT",
+          snippet: "MAX OUT",
+          body: "MAX OUT",
+        };
         agent
           .post("/login")
           .send({ email: user.email, password: testUserPassword })
@@ -296,8 +296,6 @@ describe("App", () => {
               });
           });
       });
-
-      
     });
 
     describe("GET /update/:id", () => {
@@ -320,10 +318,8 @@ describe("App", () => {
         agent
           .post(`/user/login`)
           .send({ email: user.email, password: testUserPassword })
-          .end((err, res) => { 
-            return agent
-             .get(`/blogs/update/${id}`)
-             .end((err, res) => {
+          .end((err, res) => {
+            return agent.get(`/blogs/update/${id}`).end((err, res) => {
               const prefillTitle = new RegExp(`${blog.title}`);
               const prefillSnippet = new RegExp(`${blog.snippet}`);
               const prefillBody = new RegExp(`${blog.body}`);
@@ -331,8 +327,8 @@ describe("App", () => {
               res.text.should.match(prefillSnippet);
               res.text.should.match(prefillBody);
               done();
-             });
-          })
+            });
+          });
       });
     });
 
@@ -357,7 +353,10 @@ describe("App", () => {
         const user = testUsersArray[testUsersArray.length - 1];
         const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
-        const blogUpdate = { title: "Too Long Title sjhfsjhfsjhjhfkjshfsjhfsjdkfhjfhsfjhsdjkfdhsfjkshfjshdfjsdhfskjfsjhdfjskh" };
+        const blogUpdate = {
+          title:
+            "Too Long Title sjhfsjhfsjhjhfkjshfsjhfsjdkfhjfhsfjhsdjkfdhsfjkshfjshdfjsdhfskjfsjhdfjskh",
+        };
         agent
           .post(`/user/login`)
           .send({ email: user.email, password: testUserPassword })
@@ -380,9 +379,11 @@ describe("App", () => {
         const user = testUsersArray[testUsersArray.length - 1];
         const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
-        const blogUpdate = { 
+        const blogUpdate = {
           title: "New blog title",
-          snippet: "Too Long Snippet fhsdjfhjhfjkhflashfajkfhfahfhdfkjhaskfjhafjkhafjdfhasjdlfasdkjfhasfhasfhasdlkhfksahfaksjhfjsalhfaskjdhfjkhsafjklhasksjdhfasjkfhaskjfh" };
+          snippet:
+            "Too Long Snippet fhsdjfhjhfjkhflashfajkfhfahfhdfkjhaskfjhafjkhafjdfhasjdlfasdkjfhasfhasfhasdlkhfksahfaksjhfjsalhfaskjdhfjkhsafjklhasksjdhfasjkfhaskjfh",
+        };
         agent
           .post(`/user/login`)
           .send({ email: user.email, password: testUserPassword })
@@ -405,10 +406,10 @@ describe("App", () => {
         const user = testUsersArray[testUsersArray.length - 1];
         const blog = testBlogsArray[testBlogsArray.length - 1];
         const id = blog._id;
-        const blogUpdate = { 
+        const blogUpdate = {
           title: "New blog title",
           snippet: "New blog snippet",
-          body: "" 
+          body: "",
         };
         agent
           .post(`/user/login`)
@@ -490,22 +491,21 @@ describe("App", () => {
     describe("Any blog route", () => {
       it("should send error if the number of requests reaches the limit", (done) => {
         let limit = process.env.TEST_MAX_API_BLOGS_REQS;
-        for(let i = 0; i <= limit; ++i){
+        for (let i = 0; i <= limit; ++i) {
           chai
-          .request(app)
-          .get("/blogs")
-          .end((err, res) => {})
+            .request(app)
+            .get("/blogs")
+            .end((err, res) => {});
         }
         chai
-        .request(app)
-        .get("/blogs")
-        .end((err, res) => {
-          res.text.should.match(/too many blog requests/i);
-          done(); 
-        })
-          
-      })
-    })
+          .request(app)
+          .get("/blogs")
+          .end((err, res) => {
+            res.text.should.match(/too many blog requests/i);
+            done();
+          });
+      });
+    });
   });
 
   describe("User routes", () => {
@@ -584,7 +584,7 @@ describe("App", () => {
           .post("/user/signup")
           .send(newUser)
           .end((err, res) => {
-            testUsersArray.shift()
+            testUsersArray.shift();
             return agent
               .post("/user/login")
               .send(oldestUser)
@@ -610,7 +610,9 @@ describe("App", () => {
           .send(credentials)
           .end((err, res) => {
             expect(res).to.redirectTo(/login/i);
-            res.text.should.match(/please enter email you have signed up with/i);
+            res.text.should.match(
+              /please enter email you have signed up with/i
+            );
             done();
           });
       });
@@ -650,15 +652,15 @@ describe("App", () => {
           email: testUsersArray[0].email,
           password: testUserPassword,
         };
-          agent 
-            .post(`/user/login`)
-            .send(credentials)
-            .end((err, res) => {
-              res.should.have.status(200);
-              expect(res).to.redirectTo(/blogs\/create/i);
-              res.text.should.match(/log out/i);
-              done()
-            });
+        agent
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {
+            res.should.have.status(200);
+            expect(res).to.redirectTo(/blogs\/create/i);
+            res.text.should.match(/log out/i);
+            done();
+          });
       });
     });
 
@@ -673,13 +675,11 @@ describe("App", () => {
           .post(`/user/login`)
           .send(credentials)
           .end((err, res) => {
-            return agent
-              .get("/user/logout")
-              .end((err, res) => {
-                expect(res).to.redirect;
-                res.text.should.match(/log in/i);
-                done();
-              });
+            return agent.get("/user/logout").end((err, res) => {
+              expect(res).to.redirect;
+              res.text.should.match(/log in/i);
+              done();
+            });
           });
       });
     });
@@ -691,22 +691,21 @@ describe("App", () => {
           password: "abcABC123!",
         };
         const limit = process.env.TEST_MAX_API_USER_REQS;
-        for(let i = 0; i <= limit; ++i){
+        for (let i = 0; i <= limit; ++i) {
           agent
-          .post(`/user/login`)
-          .send(credentials)
-          .end((err, res) => {})
+            .post(`/user/login`)
+            .send(credentials)
+            .end((err, res) => {});
         }
         agent
-        .post(`/user/login`)
-        .send(credentials)
-        .end((err, res) => {
-          res.text.should.match(/too many login\/signup requests/i);
-          done();
-        })
-
-      })
-    })
+          .post(`/user/login`)
+          .send(credentials)
+          .end((err, res) => {
+            res.text.should.match(/too many login\/signup requests/i);
+            done();
+          });
+      });
+    });
   });
 
   describe("About route", () => {
@@ -736,19 +735,17 @@ describe("App", () => {
           });
       });
     });
+  });
 
-  })
-
-  describe("404 route", ()=> {
-    it("should render Page Not Found if the route doesn't exist", (done)=> {
+  describe("404 route", () => {
+    it("should render Page Not Found if the route doesn't exist", (done) => {
       chai
-      .request(app)
-      .get('/somepage')
-      .end((err, res) => {
-        res.text.should.match(/not found/i)
-        done()
-      })
-    })
-  })
-
+        .request(app)
+        .get("/somepage")
+        .end((err, res) => {
+          res.text.should.match(/not found/i);
+          done();
+        });
+    });
+  });
 });

@@ -25,10 +25,9 @@
             <div class="update-blog-buttons">
             <button id="submit-blog">Save</button> 
             <a id="discard-changes" href="/blogs/<%= blog._id %>">Discard</a>   
-            </div>
-            
+            </div>       
         </form>
     </div>
-    <% } else { %>
-        <%- include('../partials/not-authorized.ejs') %>
-            <% } %>
+<% } else { %>
+  <%- include('../partials/not-authorized.ejs') %>
+<% } %>

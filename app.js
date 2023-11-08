@@ -1,54 +1,53 @@
 import dotenv from "dotenv";
 dotenv.config();
-import express from 'express';
-import mongoose from 'mongoose';
+import express from "express";
+import mongoose from "mongoose";
 import DB from "./config/database.js";
-import blogRoutes from './routes/blogRoutes.js';
+import blogRoutes from "./routes/blogRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
-import expressEjsLayouts from 'express-ejs-layouts';
-import { api_user_limiter, api_blogs_limiter } from "./config/rateLimiters.js"
+import expressEjsLayouts from "express-ejs-layouts";
+import { api_user_limiter, api_blogs_limiter } from "./config/rateLimiters.js";
 import passport from "passport";
-import session from 'express-session';
-import connectMongo from 'connect-mongo'
+import session from "express-session";
+import connectMongo from "connect-mongo";
 import flash from "connect-flash";
-import morgan from 'morgan';
+import morgan from "morgan";
 
 mongoose.set("strictQuery", false);
 const app = express();
 const MongoStore = connectMongo(session);
 
-app.use(express.json());  
-app.set('view engine', 'ejs');                           
-app.use(expressEjsLayouts);                         
-app.use(express.static('public'));  
+app.use(express.json());
+app.set("view engine", "ejs");
+app.use(expressEjsLayouts);
+app.use(express.static("public"));
 app.use(express.urlencoded({ extended: true }));
 app.use(flash());
 
-if(process.env.NODE_ENV === "development") {
-  app.use(morgan('dev')); 
+if (process.env.NODE_ENV === "development") {
+  app.use(morgan("dev"));
 }
 
 const sessionStore = new MongoStore({
-    mongooseConnection: DB.connection,
-    collection: 'sessions'
-  });
+  mongooseConnection: DB.connection,
+  collection: "sessions",
+});
 
 app.use(
-      session({
-      secret: process.env.SECRET,
-      resave: false,
-      saveUninitialized: false,
-      store: sessionStore,
-      unset: "destroy",
-      cookie: {maxAge: 360000}
-    })
-   )
+  session({
+    secret: process.env.SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
+    unset: "destroy",
+    cookie: { maxAge: 360000 },
+  })
+);
 
-// REGISTER PASSPORT
-import('./config/passport.js');
-// keep reinitializing passport middleware as we hit different routes
+import("./config/passport.js");
+
 app.use(passport.initialize());
-app.use(passport.session())
+app.use(passport.session());
 
 app.use((req, res, next) => {
   if (req.session.flash && req.session.flash.error) {
@@ -72,11 +71,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/', (req, res) => {  
-    res.redirect('/blogs'); 
-})                         
+app.get("/", (req, res) => {
+  res.redirect("/blogs");
+});
 app.get("/about", (req, res) => {
-  res.render("about", { title: "About" }); 
+  res.render("about", { title: "About" });
 });
 app.get("/signup", (req, res) => {
   res.render("users/signup", { title: "Sign Up" });
@@ -85,20 +84,21 @@ app.get("/login", (req, res) => {
   res.render("users/login", { title: "Log In" });
 });
 
-app.use('/blogs', api_blogs_limiter);
-app.use('/user', api_user_limiter)
-app.use('/blogs', blogRoutes);
+app.use("/blogs", api_blogs_limiter);
+app.use("/user", api_user_limiter);
+app.use("/blogs", blogRoutes);
 app.use("/user", userRoutes);
 
-app.use((req, res) => { 
-    res.status(404).render("404", { title: "Page Not Found" });
-})
+app.use((req, res) => {
+  res.status(404).render("404", { title: "Page Not Found" });
+});
 
-function listen(){
-  const port = process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT
+function listen() {
+  const port =
+    process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
   app.listen(port);
-  console.log(`listening on port ${port}`)
+  console.log(`listening on port ${port}`);
 }
-listen()
+listen();
 
 export default app;

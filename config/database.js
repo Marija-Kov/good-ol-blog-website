@@ -2,7 +2,7 @@ import mongoose from "mongoose";
 import blogSchema from "../schemas/blog.js";
 import userSchema from "../schemas/user.js";
 import dotenv from "dotenv";
-dotenv.config()
+dotenv.config();
 
 const connection = mongoose.createConnection(process.env.MONGO_URI, {
   useNewUrlParser: true,
@@ -15,7 +15,7 @@ const Blog = connection.model("Blog", blogSchema);
 const DB = {
   connection,
   User,
-  Blog
-}
+  Blog,
+};
 
 export default DB;

@@ -5,6 +5,7 @@
   "description": "A CRUD app built with NodeJS, MongoDB and EJS.",
   "main": "app.js",
   "scripts": {
+    "dev": "nodemon app",
     "test": "NODE_ENV=test mocha -- --detectOpenHandles --runInBand --timeout 20000 || true",
     "test-with-coverage": "nyc --reporter=text mocha"
   },

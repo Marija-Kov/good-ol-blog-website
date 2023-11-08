@@ -1,60 +1,55 @@
 <div class="content">
   <h2>All blogs</h2>
   <div class="blogs">
-    <% if (blogs.length> 0) { %>
-      <% blogs.forEach(blog=> { %>
-        <a class="single" href="/blogs/<%= blog._id %>">
-          <h3 class="title">
-            <%=blog.title %>
-          </h3>
-          <p class="snippet">
-            <%= blog.snippet %>
-          </p>
-        </a>
-        <% }) %>
-          <% } else {%>
-            <p>Nothing yet to see here and onwards!</p>
-            <% }%>
-            <div class="scroll-down-pointer"></div>
+    <% if (blogs.length> 0) { %> <% blogs.forEach(blog=> { %>
+    <a class="single" href="/blogs/<%= blog._id %>">
+      <h3 class="title"><%=blog.title %></h3>
+      <p class="snippet"><%= blog.snippet %></p>
+    </a>
+    <% }) %> 
+    <% } else {%>
+     <p>Nothing yet to see here and onwards!</p>
+    <% }%>
+    <div class="scroll-down-pointer"></div>
   </div>
   <script>
-  const host = '<%=host%>';
-  window.onbeforeunload = () => window.scrollTo(0, 0);
-  const loadNextPage = loadMoreBlogs(1);
-  const content = document.querySelector(".content");
-  content.style.minHeight = window.innerWidth > 530 ? "105vh" : "110vh";
-  let height = 180;
-  addEventListener("scroll", () => {
-  if(window.scrollY >= height){
-    loadNextPage()
-    height += height;
-  } 
-  });
-  function loadMoreBlogs(firstPage){
-    let currentPage = firstPage;
-    return async function loadNextPage(){
-      const response = await fetch(`${host}blogs/load-more`, {
-      method: "POST",
-      body: JSON.stringify({
-        currentPage
-      }),
-      headers: {
-        "Content-Type": "application/json"
+    const host = "<%=host%>";
+    window.onbeforeunload = () => window.scrollTo(0, 0);
+    const loadNextPage = loadMoreBlogs(1);
+    const content = document.querySelector(".content");
+    content.style.minHeight = window.innerWidth > 530 ? "105vh" : "110vh";
+    let height = 180;
+    addEventListener("scroll", () => {
+      if (window.scrollY >= height) {
+        loadNextPage();
+        height += height;
       }
     });
-    if(!response){
-      console.log("COULD NOT GET RESPONSE")
-      return
-    }
-    const json = await response.json();
-    const blogs = json.blogs;
-    const contentDiv = document.querySelector('.content');
-    const blogsDiv = document.createElement('div');
-    blogs.map(b => {
-      const blogElement = document.createElement('a');
-      blogElement.classList.add('single');
-      blogElement.href = `/blogs/${b._id}`;
-      blogElement.innerHTML = `
+    function loadMoreBlogs(firstPage) {
+      let currentPage = firstPage;
+      return async function loadNextPage() {
+        const response = await fetch(`${host}blogs/load-more`, {
+          method: "POST",
+          body: JSON.stringify({
+            currentPage,
+          }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+        });
+        if (!response) {
+          console.log("COULD NOT GET RESPONSE");
+          return;
+        }
+        const json = await response.json();
+        const blogs = json.blogs;
+        const contentDiv = document.querySelector(".content");
+        const blogsDiv = document.createElement("div");
+        blogs.map((b) => {
+          const blogElement = document.createElement("a");
+          blogElement.classList.add("single");
+          blogElement.href = `/blogs/${b._id}`;
+          blogElement.innerHTML = `
         <h3 class="title">
           ${b.title}
         </h3>
@@ -62,13 +57,12 @@
           ${b.snippet}
         </p>
       `;
-      blogsDiv.appendChild(blogElement);
-    })
-    blogsDiv.setAttribute("class", "blogs");
-    contentDiv.appendChild(blogsDiv)
-    currentPage = json.currentPage
+          blogsDiv.appendChild(blogElement);
+        });
+        blogsDiv.setAttribute("class", "blogs");
+        contentDiv.appendChild(blogsDiv);
+        currentPage = json.currentPage;
+      };
     }
-  }
   </script>
 </div>
- 
