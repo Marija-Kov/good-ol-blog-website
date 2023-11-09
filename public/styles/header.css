@@ -1,0 +1,12 @@
+.title > a > h1 {
+  font-size: 1.7em;
+  font-family: "Reenie Beanie", cursive;
+}
+
+.title {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: fit-content;
+  font-family: var(--title-font);
+}

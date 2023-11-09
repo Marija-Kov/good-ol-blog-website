@@ -1,0 +1,57 @@
+@import url("https://fonts.googleapis.com/css2?family=Reenie+Beanie&display=swap");
+@import url("https://fonts.googleapis.com/css2?family=Signika:wght@300;400;500;600&display=swap");
+
+:root {
+  --primary: rgb(36, 36, 36);
+  --accent-1: orangered;
+  --body-bkg: rgb(207, 185, 135);
+  --title-font: "Lexend", sans-serif;
+  --title-font-2: "Signika", sans-serif;
+  --text-primary-font: "Signika", sans-serif;
+  --navlink-font-size: 0.9em;
+  --hover-color: rgb(77, 77, 245);
+  --footer-text: rgb(100, 97, 97);
+  --error-text: crimson;
+}
+
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  list-style: none;
+  text-decoration: none;
+  color: var(--primary);
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: var(--text-primary-font);
+  font-weight: 300;
+  background: var(--body-bkg);
+}
+
+input {
+  height: 2em;
+  padding: 2px;
+  background: var(--body-bkg);
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+}
+
+.error {
+  color: var(--error-text);
+}
+
+.content {
+  padding-left: 50px;
+}
+
+@media screen and (max-width: 530px) {
+
+  .content {
+    padding-left: 30px;
+    margin-right: 20px;
+  }
+  
+}

@@ -1,0 +1,7 @@
+footer {
+  position: relative;
+  height: fit-content;
+  padding-left: 50px;
+  color: var(--footer-text);
+  font-size: 0.8em;
+}

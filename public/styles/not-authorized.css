@@ -1,0 +1,9 @@
+.not-authorized {
+  margin-top: 50px;
+  max-width: 600px;
+  height: 72.9vh;
+}
+
+.not-authorized > p {
+  font-size: 1.5em;
+}

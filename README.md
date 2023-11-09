@@ -127,6 +127,7 @@ All files                 |   89.74 |    82.85 |   74.28 |   89.74 |
 
 - Test client-side logic;
 - Blog chunks should be showing in consistent style. As is, the first chunk to load on scroll is not animated;
+- Minify CSS;
 
 <br>
 

@@ -1,0 +1,36 @@
+.about {
+  max-width: 700px;
+  height: 77.125vh;
+}
+
+.about > h2 {
+  font-size: 1.2em;
+}
+
+.about > p {
+  max-width: 90%;
+  margin-bottom: 20px;
+}
+
+button#edit-about {
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 0.8em;
+  font-weight: 400;
+  padding: 3px 15px 3px 15px;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+}
+
+button#edit-about:hover {
+  border: solid 1px var(--hover-color);
+  color: var(--hover-color);
+  transform: translate(1px, 1px);
+  box-shadow: 1px 1px;
+}
+
+.github-logo {
+  height: 40px;
+}
