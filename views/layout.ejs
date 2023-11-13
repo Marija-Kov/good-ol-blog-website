@@ -2,8 +2,41 @@
 <html lang="en">
   <%- include('./partials/head.ejs') %>
   <body>
-    <%- include('./partials/nav.ejs') %> 
-    <%- body %> 
-    <%- include('./partials/foot.ejs') %>
+    <%- include('./partials/nav.ejs') %> <%- body %> <%-
+    include('./partials/foot.ejs') %>
+    <button class="enableLiveUpdates">Live Updates</button>
+    <script>
+      const button = document.querySelector(".enableLiveUpdates");
+      let socket;
+
+      const handleOpen = (e) => {
+        console.log("Open WS request sent");
+      };
+      const handleClose = (e) => {
+        console.log("Close WS request sent");
+        cleanup();
+      };
+
+      const openWebSocket = () => {
+        socket = new WebSocket("wss://localhost:3002");
+        socket.addEventListener("open", handleOpen);
+        socket.addEventListener("close", handleClose);
+        button.removeEventListener("click", openWebSocket);
+        button.addEventListener("click", closeWebSocket);
+      };
+
+      const closeWebSocket = () => {
+        socket.close();
+      };
+
+      const cleanup = () => {
+        socket.removeEventListener("open", handleOpen);
+        socket.removeEventListener("close", handleClose);
+        button.removeEventListener("click", closeWebSocket);
+        button.addEventListener("click", openWebSocket);
+      };
+
+      button.addEventListener("click", openWebSocket);
+    </script>
   </body>
 </html>
