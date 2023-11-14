@@ -4,7 +4,10 @@
   <body>
     <%- include('./partials/nav.ejs') %> <%- body %> <%-
     include('./partials/foot.ejs') %>
-    <button class="enableLiveUpdates">Live Updates</button>
+    <div class="liveUpdatesContainer">
+      <div class="liveUpdatesContent"></div>
+      <button class="enableLiveUpdates">Live Updates</button>
+    </div>
     <script>
       const button = document.querySelector(".enableLiveUpdates");
       let socket;
@@ -12,6 +15,7 @@
       const handleOpen = (e) => {
         console.log("Open WS request sent");
       };
+
       const handleClose = (e) => {
         console.log("Close WS request sent");
         cleanup();

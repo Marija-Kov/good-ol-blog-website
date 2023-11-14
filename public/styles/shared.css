@@ -46,6 +46,27 @@ input {
 .content {
   padding-left: 50px;
 }
+.liveUpdatesContainer {
+  position: fixed;
+  top: 70%;
+  right: 200px;
+  width: fit-content;
+  height:fit-content;
+}
+button.enableLiveUpdates {
+  padding: 0 3px;
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-family: var(--text-primary-font);
+  font-weight: 500;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+  width:fit-content;
+  height: 2.2em;
+  margin-top: 5px;
+}
 
 @media screen and (max-width: 530px) {
 
