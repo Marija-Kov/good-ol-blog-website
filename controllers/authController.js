@@ -1,5 +1,6 @@
 import passport from "passport";
 import { genPassword } from "../utils/passwordUtils.js";
+import { wss } from "../app.js";
 let User;
 
 if (process.env.NODE_ENV !== "test") {
@@ -48,6 +49,9 @@ const user_signup = async (req, res, next) => {
         User.findByIdAndDelete(id)
           .then((result) => {
             res.status(200);
+            wss.clients.forEach((client) => {
+              client.send(`🟢 Deleted user ${id}`);
+            });
           })
           .catch((error) => {
             res.status(400).json({ error: error.message });
@@ -68,6 +72,9 @@ const user_signup = async (req, res, next) => {
       salt: salt,
     });
     newUser.save();
+    wss.clients.forEach((client) => {
+      client.send(`🟢 New user signed up ${email}`);
+    });
     req.flash("success", "Success! You may log in now.");
     res.redirect("/login");
   } catch (error) {
