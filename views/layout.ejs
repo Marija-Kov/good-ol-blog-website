@@ -13,11 +13,20 @@
       let socket;
 
       const handleOpen = (e) => {
-        console.log("Open WS request sent");
+        console.log("🖥️ Open WS request sent");
       };
 
-      const handleClose = (e) => {
-        console.log("Close WS request sent");
+      const handleMessage = (event) => {
+        const message = event.data;
+        if (!message) {
+          console.log("No message received from server");
+          return;
+        }
+        console.log(message);
+      };
+
+      const handleClose = (event) => {
+        console.log("🖥️ Close WS request sent");
         cleanup();
       };
 
@@ -25,6 +34,7 @@
         socket = new WebSocket("wss://localhost:3002");
         socket.addEventListener("open", handleOpen);
         socket.addEventListener("close", handleClose);
+        socket.addEventListener("message", handleMessage);
         button.removeEventListener("click", openWebSocket);
         button.addEventListener("click", closeWebSocket);
       };
@@ -36,6 +46,7 @@
       const cleanup = () => {
         socket.removeEventListener("open", handleOpen);
         socket.removeEventListener("close", handleClose);
+        socket.removeEventListener("message", handleMessage);
         button.removeEventListener("click", closeWebSocket);
         button.addEventListener("click", openWebSocket);
       };
