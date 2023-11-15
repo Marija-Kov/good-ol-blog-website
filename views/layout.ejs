@@ -5,11 +5,12 @@
     <%- include('./partials/nav.ejs') %> <%- body %> <%-
     include('./partials/foot.ejs') %>
     <div class="live-updates-container">
-      <div class="live-updates-content"></div>
       <button class="toggle-live-updates">Live Updates</button>
+      <div class="live-updates-content"></div>
     </div>
     <script>
       const button = document.querySelector(".toggle-live-updates");
+      const liveUpdatesContent = document.querySelector(".live-updates-content");
       let socket;
 
       const handleOpen = (e) => {
@@ -22,7 +23,9 @@
           console.log("No message received from server");
           return;
         }
-        console.log(message);
+        const messageElement = document.createElement("p");
+        messageElement.textContent = message;
+        liveUpdatesContent.appendChild(messageElement);
       };
 
       const handleClose = (event) => {

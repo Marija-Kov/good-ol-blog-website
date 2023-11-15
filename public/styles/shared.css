@@ -50,9 +50,19 @@ input {
 .live-updates-container {
   position: fixed;
   top: 70%;
-  right: 200px;
+  right: 20px;
   width: fit-content;
   height: fit-content;
+}
+
+.live-updates-content {
+  padding-left: 2px;
+  margin-bottom: 5px;
+  overflow-y: scroll;
+  height: 150px;
+  width: 250px;
+  background: var(--body-bkg);
+  border: solid 1px var(--primary);
 }
 
 button.toggle-live-updates {
