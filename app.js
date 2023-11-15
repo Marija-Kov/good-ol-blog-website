@@ -112,14 +112,14 @@ const wss = new WebSocketServer({ server: server });
 wss.on("connection", (ws) => {
   console.log("WSS connection established");
 
-  ws.send("🟢 Open WS request received");
+  ws.send("Listening...");
   
   ws.on("message", (data) => {
     console.log("received: %s", data);
   });
 
   ws.on("error", () => {
-    console.log("Something went wrong");
+    ws.send("❌ Something went wrong");
   });
 
   ws.on("close", () => {
