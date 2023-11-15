@@ -50,7 +50,7 @@ const user_signup = async (req, res, next) => {
           .then((result) => {
             res.status(200);
             wss.clients.forEach((client) => {
-              client.send(`🟢 Deleted user ${id}`);
+              client.send(`♻️ Users maxed out, removed user ${result.email}`);
             });
           })
           .catch((error) => {
@@ -73,7 +73,7 @@ const user_signup = async (req, res, next) => {
     });
     newUser.save();
     wss.clients.forEach((client) => {
-      client.send(`🟢 New user signed up ${email}`);
+      client.send(`👤 New user signed up ${email}`);
     });
     req.flash("success", "Success! You may log in now.");
     res.redirect("/login");
@@ -89,6 +89,9 @@ const user_login = passport.authenticate("local", {
 
 const user_logout = (req, res, next) => {
   req.logout((err) => {
+    wss.clients.forEach((client) => {
+      client.send(`🔑 Someone logged out`);
+    });
     if (err) {
       next(err);
     }
