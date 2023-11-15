@@ -53,6 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
+  res.locals.wssHost = process.env.WSS_HOST;
   if (req.session.flash && req.session.flash.error) {
     res.locals.error = req.session.flash.error;
   } else {

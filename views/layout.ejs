@@ -9,6 +9,7 @@
       <button class="toggle-live-updates">Live Updates</button>
     </div>
     <script>
+      const wssHost = "<%=wssHost%>";
       const button = document.querySelector(".toggle-live-updates");
       const liveUpdatesContent = document.querySelector(
         ".live-updates-content"
@@ -41,7 +42,7 @@
       };
 
       const openWebSocket = () => {
-        socket = new WebSocket("wss://localhost:3002");
+        socket = new WebSocket(`${wssHost}`);
         socket.addEventListener("open", handleOpen);
         socket.addEventListener("close", handleClose);
         socket.addEventListener("message", handleMessage);
