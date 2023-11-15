@@ -4,12 +4,12 @@
   <body>
     <%- include('./partials/nav.ejs') %> <%- body %> <%-
     include('./partials/foot.ejs') %>
-    <div class="liveUpdatesContainer">
-      <div class="liveUpdatesContent"></div>
-      <button class="enableLiveUpdates">Live Updates</button>
+    <div class="live-updates-container">
+      <div class="live-updates-content"></div>
+      <button class="toggle-live-updates">Live Updates</button>
     </div>
     <script>
-      const button = document.querySelector(".enableLiveUpdates");
+      const button = document.querySelector(".toggle-live-updates");
       let socket;
 
       const handleOpen = (e) => {
