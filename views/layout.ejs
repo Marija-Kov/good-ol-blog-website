@@ -5,16 +5,18 @@
     <%- include('./partials/nav.ejs') %> <%- body %> <%-
     include('./partials/foot.ejs') %>
     <div class="live-updates-container">
-      <button class="toggle-live-updates">Live Updates</button>
       <div class="live-updates-content"></div>
+      <button class="toggle-live-updates">Live Updates</button>
     </div>
     <script>
       const button = document.querySelector(".toggle-live-updates");
-      const liveUpdatesContent = document.querySelector(".live-updates-content");
+      const liveUpdatesContent = document.querySelector(
+        ".live-updates-content"
+      );
       let socket;
 
       const handleOpen = (e) => {
-        console.log("🖥️ Open WS request sent");
+        button.textContent = "Close Live Updates";
       };
 
       const handleMessage = (event) => {
@@ -25,11 +27,16 @@
         }
         const messageElement = document.createElement("p");
         messageElement.textContent = message;
+        liveUpdatesContent.style.display = "inline-block";
         liveUpdatesContent.appendChild(messageElement);
       };
 
       const handleClose = (event) => {
-        console.log("🖥️ Close WS request sent");
+        liveUpdatesContent.style.display = "none";
+        while (liveUpdatesContent.firstChild) {
+          liveUpdatesContent.firstChild.remove();
+        }
+        button.textContent = "Live Updates";
         cleanup();
       };
 
