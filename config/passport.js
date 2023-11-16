@@ -1,6 +1,7 @@
 import passport from "passport";
 import { verifyPassword } from "../utils/passwordUtils.js";
 import * as passportLocal from "passport-local";
+import { wss } from "../app.js";
 const LocalStrategy = passportLocal.Strategy;
 
 let User;
@@ -42,6 +43,9 @@ const verifyCallback = async (req, email, password, done) => {
     }
     const isValid = await verifyPassword(password, user.hash, user.salt);
     if (isValid) {
+      wss.clients.forEach((client) => {
+        client.send(`🔑 ${user.email} logged in`);
+      });
       return done(null, user);
     } else {
       req.flash("error", "⚠Wrong password");

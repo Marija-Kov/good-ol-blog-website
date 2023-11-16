@@ -1,3 +1,4 @@
+import { wss } from "../app.js";
 let Blog;
 if (process.env.NODE_ENV !== "test") {
   import("../config/database.js")
@@ -121,8 +122,11 @@ const blog_create_post = (req, res) => {
       if (blogs.length >= maxBlogs) {
         const id = blogs[0]._id;
         Blog.findByIdAndDelete(id)
-          .then((result) => {
+          .then((blog) => {
             res.status(200);
+            wss.clients.forEach((client) => {
+              client.send(`♻️ Blogs maxed out, deleted blog "${blog.title}"`);
+            });
           })
           .catch((error) => {
             res.status(400).json({ error: error.message });
@@ -136,8 +140,11 @@ const blog_create_post = (req, res) => {
   const blog = new Blog(req.body);
   blog
     .save()
-    .then((result) => {
+    .then((blog) => {
       res.status(200).redirect("/blogs");
+      wss.clients.forEach((client) => {
+        client.send(`👓 New blog: "${blog.title}"`);
+      });
     })
     .catch((error) => {
       res.status(400).json({ error: error.message });
@@ -150,8 +157,11 @@ const blog_delete = (req, res) => {
   }
   const id = req.params.id;
   Blog.findByIdAndDelete(id)
-    .then((result) => {
+    .then((blog) => {
       res.status(200).redirect("/blogs");
+      wss.clients.forEach((client) => {
+        client.send(`🗑️ Someone deleted blog: "${blog.title}"`);
+      });
     })
     .catch((error) => {
       res.status(400).json({ error: error.message });
@@ -222,8 +232,11 @@ const blog_update_patch = (req, res) => {
     new: true,
     runValidators: true,
   })
-    .then((result) => {
+    .then((blog) => {
       res.status(200).redirect(`/blogs/${id}`);
+      wss.clients.forEach((client) => {
+        client.send(`✍️ Someone edited a blog, id: ${id}, now titled: "${blog.title}"`);
+      });
     })
     .catch((error) => {
       res.status(400).json({ error: error.message });

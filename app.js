@@ -12,6 +12,9 @@ import session from "express-session";
 import connectMongo from "connect-mongo";
 import flash from "connect-flash";
 import morgan from "morgan";
+import fs from "fs";
+import https from "https";
+import { WebSocketServer } from "ws";
 
 mongoose.set("strictQuery", false);
 const app = express();
@@ -50,6 +53,7 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use((req, res, next) => {
+  res.locals.wssHost = process.env.WSS_HOST;
   if (req.session.flash && req.session.flash.error) {
     res.locals.error = req.session.flash.error;
   } else {
@@ -93,12 +97,45 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "Page Not Found" });
 });
 
+const server =
+  process.env.NODE_ENV === "production"
+    ? https.createServer(app)
+    : https.createServer(
+        {
+          key: fs.readFileSync("key.pem"),
+          cert: fs.readFileSync("cert.pem"),
+        },
+        app
+      );
+
+const wss = new WebSocketServer({ server: server });
+
+wss.on("connection", (ws) => {
+  console.log("WSS connection established");
+
+  ws.send("Listening...");
+  
+  ws.on("message", (data) => {
+    console.log("received: %s", data);
+  });
+
+  ws.on("error", () => {
+    ws.send("❌ Something went wrong");
+  });
+
+  ws.on("close", () => {
+    console.log("WS connection closed");
+  });
+});
+
 function listen() {
   const port =
     process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
-  app.listen(port);
-  console.log(`listening on port ${port}`);
+  server.listen(port, () => {
+    console.log(`listening on port ${port}`);
+  });
 }
+
 listen();
 
-export default app;
+export { app, wss };

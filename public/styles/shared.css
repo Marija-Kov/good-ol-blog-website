@@ -47,11 +47,50 @@ input {
   padding-left: 50px;
 }
 
-@media screen and (max-width: 530px) {
+.live-updates-container {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: fit-content;
+  height: fit-content;
+}
 
+.live-updates-content {
+  display: none;
+  padding-left: 2px;
+  margin-bottom: 5px;
+  overflow-y: scroll;
+  height: 150px;
+  width: 250px;
+  background: var(--body-bkg);
+  border: solid 1px var(--primary);
+}
+
+.live-updates-content > p:nth-child(even) {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+button.toggle-live-updates {
+  padding: 0 3px;
+  border: solid 1px var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-family: var(--text-primary-font);
+  font-weight: 500;
+  background: none;
+  cursor: pointer;
+  box-shadow: 2px 2px;
+  width: fit-content;
+  height: 2.2em;
+  margin-top: 5px;
+}
+
+@media screen and (max-width: 530px) {
   .content {
     padding-left: 30px;
     margin-right: 20px;
   }
-  
 }
