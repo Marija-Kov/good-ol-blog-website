@@ -4,7 +4,7 @@
  Thank you for your patience❣️
 </h3>
 <br>
-<div align="center"><img src="" alt="a nice preview of the app should be here" /></div> 
+<div align="center"><img src="https://i.imgur.com/Tf9PNOm.gif" alt="Client 1 receives live updates as Client 2 performs them" /></div> 
 <br>
 
 ---
