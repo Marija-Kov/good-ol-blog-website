@@ -11,7 +11,7 @@
 
 ## Table of Contents
 
-1. [App Features](#features)
+1. [App Features and Limitations](#features)
 2. [Local Usage](#localUsage)
 3. [Tools and Dependencies](#tools)
 4. [Environment variables](#environment-variables)
@@ -22,15 +22,22 @@
 ---
 <br>
 
-## App Features <a name = "features"></a>
+## App Features and Limitations <a name = "features"></a>
 
 Index page shows a list of blogs/links. Scrolling down the page will send requests to the server and load more blogs in chunks.
 Guest users have read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
 
-Immediately upon signing up, a user document is created in the database and the user can log in into their account and see authenticated-user-only content.
+Immediately upon signing up, a user document is created in the database and the user can log in into their account and see authorized-user-only options.
 
-Authenticated users can (for the time limited by the validity of the session cookie) post and edit blogs (and will be able to edit about me content). The user can log out manually or they will be logged out automatically when the cookie expires. 
-Any attempts to perform authenticated-user-only actions upon token expiration will be followed by redirection to the page with error message and automatic redirection to the index.
+Authorized users can (for the time limited by the validity of the session cookie) post and edit blogs. 
+The user can log out manually or they will be logged out automatically when the cookie expires. 
+Any attempts to perform authorized-user-only actions upon token expiration will be followed by redirection to the page with error message and automatic redirection to the index.
+
+### Limitations
+
+- The number of users and blogs in the database is limited and each will be subjected to automatic deletion, oldest first, when the limit is reached;
+- Request rate limit has been set up and the server will respond with error and block client requests whenever the limit is reached;
+- In order to try out the live server update feature, currently, you must run the app in the local environment.
 
 <br>
 
@@ -38,8 +45,12 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 
 - Clone repository;
 - Install dependencies - ```npm install``` ;
+- In the root directory, run:
+  ```openssl req -x509 -newkey rsa:4096 -sha256 -nodes -keyout key.pem -out cert.pem -subj "/CN=localhost" -days 365```
+  to create self-signed security certificate to bypass strict policies of some browsers (like Chrome);
 - Run the development server - ```npm run dev``` ;
-- Run tests - ```npm run test``` .
+- Run tests - ```npm run test```;
+
 
 <br>
 
@@ -57,6 +68,7 @@ Any attempts to perform authenticated-user-only actions upon token expiration wi
 - [Passport local](https://www.passportjs.org/packages/passport-local/) - passport local auth strategy (username & password)
 - [Connect mongo](https://github.com/jdesboeufs/connect-mongo) - session store
 - [Connect flash](https://github.com/jaredhanson/connect-flash) - storing and retrieving flash messages
+- [WS](https://github.com/websockets/ws) - Node.js WebSocket library
 
 #### Dev Dependencies
 
@@ -74,7 +86,8 @@ If you want to run the app in your local environment, you'll need to create a .e
 MONGO_URI= <br>
 TEST_MONGO_URI= <br>
 SECRET=<br>
-HOST=<br>
+HOST= #-- Should be https://... for live update to work under browser security restrictions <br>
+WSS_HOST= #-- Should be wss://... <br>
 TEST_PORT=<br>
 PORT=<br>
 DOMAIN=<br>
@@ -100,6 +113,8 @@ TEST_API_BLOGS_WINDOW_MS=<br>
 
 ## Todos <a name = "todos"></a>
 
+- Fix app breaking in production when deployed with live update feature;
+- The enabled state of the live update feature should, ideally, persist in between rendering of different pages;
 - Develop a solution to communicate free web service limits to users within the app; 
 - Test client-side logic;
 - Blog chunks should be showing in consistent style. As is, the first chunk to load on scroll appears not to be animated;
