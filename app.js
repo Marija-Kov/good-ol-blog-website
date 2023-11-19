@@ -13,6 +13,7 @@ import connectMongo from "connect-mongo";
 import flash from "connect-flash";
 import morgan from "morgan";
 import fs from "fs";
+import http from "http";
 import https from "https";
 import { WebSocketServer } from "ws";
 
@@ -97,9 +98,9 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "Page Not Found" });
 });
 
-const httpsServer =
+const server =
   process.env.NODE_ENV === "production"
-    ? https.createServer(app)
+    ? http.createServer(app)
     : https.createServer(
         {
           key: fs.readFileSync("key.pem"),
@@ -129,30 +130,14 @@ wss.on("connection", (ws) => {
 });
 
 function listen() {
-  const httpsPort =
+  const port =
     process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
-  const wssPort = process.env.WSS_PORT;
 
-  httpsServer.listen(httpsPort, () => {
-    console.log(`HTTPS server is listening on port ${httpsPort}`);
+  server.listen(port, () => {
+    console.log(`HTTP server is listening on port ${port}`);
   });
 
-  const wssHttpServer =
-    process.env.NODE_ENV === "production"
-      ? https.createServer(app)
-      : https.createServer(
-          {
-            key: fs.readFileSync("key.pem"),
-            cert: fs.readFileSync("cert.pem"),
-          },
-          app
-        );
-
-  wssHttpServer.listen(wssPort, () => {
-    console.log(`WSS server is listening on port ${wssPort}`);
-  });
-
-  wssHttpServer.on("upgrade", (request, socket, head) => {
+  server.on("upgrade", (request, socket, head) => {
     wss.handleUpgrade(request, socket, head, (ws) => {
       wss.emit("connection", ws, request);
     });
