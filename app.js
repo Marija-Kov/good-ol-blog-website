@@ -13,6 +13,7 @@ import connectMongo from "connect-mongo";
 import flash from "connect-flash";
 import morgan from "morgan";
 import fs from "fs";
+import http from "http";
 import https from "https";
 import { WebSocketServer } from "ws";
 
@@ -99,7 +100,7 @@ app.use((req, res) => {
 
 const server =
   process.env.NODE_ENV === "production"
-    ? https.createServer(app)
+    ? http.createServer(app)
     : https.createServer(
         {
           key: fs.readFileSync("key.pem"),
@@ -108,13 +109,13 @@ const server =
         app
       );
 
-const wss = new WebSocketServer({ server: server });
+const wss = new WebSocketServer({ noServer: true });
 
 wss.on("connection", (ws) => {
   console.log("WSS connection established");
 
   ws.send("Listening...");
-  
+
   ws.on("message", (data) => {
     console.log("received: %s", data);
   });
@@ -131,8 +132,15 @@ wss.on("connection", (ws) => {
 function listen() {
   const port =
     process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
+
   server.listen(port, () => {
-    console.log(`listening on port ${port}`);
+    console.log(`HTTP server is listening on port ${port}`);
+  });
+
+  server.on("upgrade", (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit("connection", ws, request);
+    });
   });
 }
 
