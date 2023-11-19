@@ -25,19 +25,22 @@
 ## App Features and Limitations <a name = "features"></a>
 
 Index page shows a list of blogs/links. Scrolling down the page will send requests to the server and load more blogs in chunks.
+
 Guest users have read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
 
-Immediately upon signing up, a user document is created in the database and the user can log in into their account and see authorized-user-only options.
+Immediately upon signing up, a user document is created in the database and the user can log in to their account and see authorized-user-only options.
 
 Authorized users can (for the time limited by the validity of the session cookie) post and edit blogs. 
 The user can log out manually or they will be logged out automatically when the cookie expires. 
 Any attempts to perform authorized-user-only actions upon token expiration will be followed by redirection to the page with error message and automatic redirection to the index.
 
+All users can enable live update feature and see all current blog and user activities.
+
 ### Limitations
 
 - The number of users and blogs in the database is limited and each will be subjected to automatic deletion, oldest first, when the limit is reached;
 - Request rate limit has been set up and the server will respond with error and block client requests whenever the limit is reached;
-- In order to try out the live server update feature, currently, you must run the app in the local environment.
+- Live update closes when navigating to a different page;
 
 <br>
 
@@ -86,8 +89,8 @@ If you want to run the app in your local environment, you'll need to create a .e
 MONGO_URI= <br>
 TEST_MONGO_URI= <br>
 SECRET=<br>
-HOST= #-- Should be https://... for live update to work under browser security restrictions <br>
-WSS_HOST= #-- Should be wss://... <br>
+HOST= #-- Should be https://localhost:{port_number} for live update to work under browser security restrictions <br>
+WSS_HOST= #-- Should be wss://localhost:{port_number} <br>
 TEST_PORT=<br>
 PORT=<br>
 DOMAIN=<br>
@@ -112,10 +115,10 @@ TEST_API_BLOGS_WINDOW_MS=<br>
 <br>
 
 ## Todos <a name = "todos"></a>
-
-- Fix app breaking in production when deployed with live update feature;
+- Live updates should be ordered newest-first or the box should scroll to bottom with every update;
 - The enabled state of the live update feature should, ideally, persist in between rendering of different pages;
-- Develop a solution to communicate free web service limits to users within the app; 
+- Develop a solution to communicate free web service limits to users within the app;
+- Test live update feature;
 - Test client-side logic;
 - Blog chunks should be showing in consistent style. As is, the first chunk to load on scroll appears not to be animated;
 - Minify CSS;
