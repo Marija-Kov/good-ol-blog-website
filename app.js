@@ -97,7 +97,7 @@ app.use((req, res) => {
   res.status(404).render("404", { title: "Page Not Found" });
 });
 
-const server =
+const httpsServer =
   process.env.NODE_ENV === "production"
     ? https.createServer(app)
     : https.createServer(
@@ -108,13 +108,13 @@ const server =
         app
       );
 
-const wss = new WebSocketServer({ server: server });
+const wss = new WebSocketServer({ noServer: true });
 
 wss.on("connection", (ws) => {
   console.log("WSS connection established");
 
   ws.send("Listening...");
-  
+
   ws.on("message", (data) => {
     console.log("received: %s", data);
   });
@@ -129,10 +129,33 @@ wss.on("connection", (ws) => {
 });
 
 function listen() {
-  const port =
+  const httpsPort =
     process.env.NODE_ENV === "test" ? process.env.TEST_PORT : process.env.PORT;
-  server.listen(port, () => {
-    console.log(`listening on port ${port}`);
+  const wssPort = process.env.WSS_PORT;
+
+  httpsServer.listen(httpsPort, () => {
+    console.log(`HTTPS server is listening on port ${httpsPort}`);
+  });
+
+  const wssHttpServer =
+    process.env.NODE_ENV === "production"
+      ? https.createServer(app)
+      : https.createServer(
+          {
+            key: fs.readFileSync("key.pem"),
+            cert: fs.readFileSync("cert.pem"),
+          },
+          app
+        );
+
+  wssHttpServer.listen(wssPort, () => {
+    console.log(`WSS server is listening on port ${wssPort}`);
+  });
+
+  wssHttpServer.on("upgrade", (request, socket, head) => {
+    wss.handleUpgrade(request, socket, head, (ws) => {
+      wss.emit("connection", ws, request);
+    });
   });
 }
 
