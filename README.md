@@ -26,7 +26,7 @@
 
 Index page shows a list of blogs/links. Scrolling down the page will send requests to the server and load more blogs in chunks.
 
-Guest users have read-only access to blog posts, and other content on the website. This restriciton is implemented by conditional rendering in the views that may show different content depending on the authenication status.
+Guest users have read-only access to blog posts, and other content on the website. This restriction is implemented by conditional rendering in the views that may show different content depending on the authenication status.
 
 Immediately upon signing up, a user document is created in the database and the user can log in to their account and see authorized-user-only options.
 
