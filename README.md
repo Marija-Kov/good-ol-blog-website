@@ -53,6 +53,7 @@ All users can enable live update feature and see all current blog and user activ
   to create self-signed security certificate to bypass strict policies of some browsers (like Chrome);
 - Run the development server - ```npm run dev``` ;
 - Run tests - ```npm run test```;
+- <b>IMPORTANT</b>: you have to explicitly type ```https``` to open the app in your browser in dev mode, example: https://localhost:3002. This is necessary because in dev environment, https Node module is used to create the server.
 
 
 <br>
