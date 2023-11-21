@@ -16,6 +16,7 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { WebSocketServer } from "ws";
+import { default as cache } from "./routeCache.js";
 
 mongoose.set("strictQuery", false);
 const app = express();
@@ -79,13 +80,13 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.redirect("/blogs");
 });
-app.get("/about", (req, res) => {
+app.get("/about", cache(300), (req, res) => {
   res.render("about", { title: "About" });
 });
-app.get("/signup", (req, res) => {
+app.get("/signup", cache(300), (req, res) => {
   res.render("users/signup", { title: "Sign Up" });
 });
-app.get("/login", (req, res) => {
+app.get("/login", cache(300), (req, res) => {
   res.render("users/login", { title: "Log In" });
 });
 
