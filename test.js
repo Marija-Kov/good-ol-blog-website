@@ -555,6 +555,36 @@ describe("App", () => {
           });
       });
 
+      it("should render error element given that the email input value is too large", (done) => {
+        const input = {
+          email: "daredevvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv@mail.yu",
+          password: "abcabc",
+        };
+        agent
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            expect(res).to.redirectTo(/signup/i);
+            res.text.should.match(/32 characters max/i);
+            done();
+          });
+      });
+
+      it("should render error element given that the password input value is too large", (done) => {
+        const input = {
+          email: "daredev@mail.yu",
+          password: "asdasdasdasdasdasdasdasdasdasdasdasdasdasdasdasdadsd",
+        };
+        agent
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            expect(res).to.redirectTo(/signup/i);
+            res.text.should.match(/32 characters max/i);
+            done();
+          });
+      });
+
       it("should redirect to login view and show success message given that input is valid", (done) => {
         const input = {
           email: "sorkor@pimpim.pij",

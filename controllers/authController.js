@@ -27,6 +27,10 @@ const user_signup = async (req, res, next) => {
     req.flash("error", "⚠Please enter valid email");
     return res.status(400).redirect("/signup");
   }
+  if (email.length > 32) {
+    req.flash("error", "⚠Email too long, 32 characters max");
+    return res.status(400).redirect("/signup");
+  }
   const emailExistsInDb = await User.findOne({ email: email });
   if (emailExistsInDb) {
     req.flash("error", "⚠Email already in use");
@@ -35,6 +39,10 @@ const user_signup = async (req, res, next) => {
   const password = req.body.password;
   if (password.length < 6) {
     req.flash("error", "⚠Password not strong enough");
+    return res.status(400).redirect("/signup");
+  }
+  if (password.length > 32) {
+    req.flash("error", "⚠Password too long, 32 characters max");
     return res.status(400).redirect("/signup");
   }
 
