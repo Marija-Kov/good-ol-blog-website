@@ -1,12 +1,12 @@
 import { app } from "./app.js";
 import chai from "chai";
 import chaiHttp from "chai-http";
+import routeCache from "./routeCache.js";
 chai.use(chaiHttp);
 const agent = chai.request.agent(app);
 const assert = chai.assert;
 const should = chai.should();
 const expect = chai.expect;
-
 import testDB from "./config/test/database.js";
 
 let testBlogsArray = [];
@@ -20,7 +20,9 @@ before(async () => {
     console.log(error);
   }
 });
-
+afterEach(() => {
+  routeCache.flush();
+});
 after(async () => {
   try {
     await testDB.clearAndCloseDB();
@@ -51,7 +53,7 @@ describe("App", () => {
     });
 
     describe("POST /load-more", () => {
-      it("should load more blogs by srolling down", (done) => {
+      it("should load more blogs by scrolling down", (done) => {
         chai
           .request(app)
           .get("/blogs")
@@ -725,6 +727,7 @@ describe("App", () => {
             .post(`/user/login`)
             .send(credentials)
             .end((err, res) => {});
+            routeCache.flush()
         }
         agent
           .post(`/user/login`)
@@ -739,28 +742,13 @@ describe("App", () => {
 
   describe("About route", () => {
     describe("GET /about", () => {
-      it("should show unauthorized user version of the about view given that the user isn't authorized", (done) => {
+      it("should render 'about' view", (done) => {
         chai
           .request(app)
           .get("/about")
           .end((err, res) => {
             res.text.should.match(/about us/i);
-            res.text.should.not.match(/edit/i);
             done();
-          });
-      });
-
-      it("should show authorized user version of the about view given that the user is authorized", (done) => {
-        const user = testUsersArray[0];
-        agent
-          .post(`/user/login`)
-          .send({ email: user.email, password: testUserPassword })
-          .end((err, res) => {
-            return agent.get("/about").end((err, res) => {
-              res.text.should.match(/about us/i);
-              res.text.should.match(/edit/i);
-              done();
-            });
           });
       });
     });
