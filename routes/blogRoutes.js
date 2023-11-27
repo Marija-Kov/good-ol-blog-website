@@ -1,7 +1,8 @@
 import express from "express";
 const router = express.Router();
 import blogController from "../controllers/blogController.js";
-import { default as cache } from "../routeCache.js";
+import routeCache from "../routeCache.js";
+const cache = routeCache.middleware;
 
 router.get("/", blogController.blog_index);
 router.post("/load-more", blogController.blog_load_more);

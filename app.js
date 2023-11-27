@@ -16,7 +16,8 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { WebSocketServer } from "ws";
-import { default as cache } from "./routeCache.js";
+import routeCache from "./routeCache.js";
+const cache = routeCache.middleware;
 
 mongoose.set("strictQuery", false);
 const app = express();
