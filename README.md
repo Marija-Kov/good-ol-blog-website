@@ -117,7 +117,6 @@ TEST_API_BLOGS_WINDOW_MS=<br>
 <br>
 
 ## Todos <a name = "todos"></a>
-- Live updates should be ordered newest-first or the box should scroll to bottom with every update;
 - The enabled state of the live update feature should, ideally, persist in between rendering of different pages;
 - Develop a solution to communicate free web service limits to users within the app;
 - Test live update feature;

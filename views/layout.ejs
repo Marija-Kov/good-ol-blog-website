@@ -30,6 +30,10 @@
         messageElement.textContent = message;
         liveUpdatesContent.style.display = "inline-block";
         liveUpdatesContent.appendChild(messageElement);
+        const lastMessage = liveUpdatesContent.querySelector(
+          ".live-updates-content > p:last-child"
+        );
+        lastMessage.scrollIntoView({ behavior: "smooth" });
       };
 
       const handleClose = (event) => {
