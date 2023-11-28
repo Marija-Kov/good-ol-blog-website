@@ -81,13 +81,13 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.redirect("/blogs");
 });
-app.get("/about", cache(300), (req, res) => {
+app.get("/about", cache(3600), (req, res) => {
   res.render("about", { title: "About" });
 });
-app.get("/signup", cache(300), (req, res) => {
+app.get("/signup", (req, res) => {
   res.render("users/signup", { title: "Sign Up" });
 });
-app.get("/login", cache(300), (req, res) => {
+app.get("/login", (req, res) => {
   res.render("users/login", { title: "Log In" });
 });
 

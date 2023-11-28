@@ -727,7 +727,7 @@ describe("App", () => {
             .post(`/user/login`)
             .send(credentials)
             .end((err, res) => {});
-            routeCache.flush()
+          routeCache.flush();
         }
         agent
           .post(`/user/login`)
