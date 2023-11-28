@@ -72,6 +72,7 @@ All users can enable live update feature and see all current blog and user activ
 - [Passport local](https://www.passportjs.org/packages/passport-local/) - passport local auth strategy (username & password)
 - [Connect mongo](https://github.com/jdesboeufs/connect-mongo) - session store
 - [Connect flash](https://github.com/jaredhanson/connect-flash) - storing and retrieving flash messages
+- [Node cache](https://github.com/node-cache/node-cache) - caching
 - [WS](https://github.com/websockets/ws) - Node.js WebSocket library
 
 #### Dev Dependencies
