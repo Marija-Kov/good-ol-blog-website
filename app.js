@@ -16,6 +16,8 @@ import fs from "fs";
 import http from "http";
 import https from "https";
 import { WebSocketServer } from "ws";
+import routeCache from "./routeCache.js";
+const cache = routeCache.middleware;
 
 mongoose.set("strictQuery", false);
 const app = express();
@@ -79,7 +81,7 @@ app.use((req, res, next) => {
 app.get("/", (req, res) => {
   res.redirect("/blogs");
 });
-app.get("/about", (req, res) => {
+app.get("/about", cache(3600), (req, res) => {
   res.render("about", { title: "About" });
 });
 app.get("/signup", (req, res) => {
