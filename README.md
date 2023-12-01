@@ -36,6 +36,8 @@ Any attempts to perform authorized-user-only actions upon token expiration will 
 
 All users can enable live update feature and see all current blog and user activities.
 
+Certain routes have been implemented with caching mechanisms.
+
 ### Limitations
 
 - The number of users and blogs in the database is limited and each will be subjected to automatic deletion, oldest first, when the limit is reached;
