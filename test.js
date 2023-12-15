@@ -191,11 +191,61 @@ describe("App", () => {
           });
       });
 
+      it("should show error and not post a blog if blog post attempt was made with title input consisting solely of empty characters", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const newBlog = {
+          title: "     ",
+          snippet: "faulty blog",
+          body: "faulty blog",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                res.text.should.match(/title must be 1-50 characters/i);
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.snippet}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
+                });
+              });
+          });
+      });
+
       it("should show error and not post a blog if blog post attempt was made with invalid snippet input", (done) => {
         const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
           title: "faulty blog",
           snippet: "",
+          body: "faulty blog",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                res.text.should.match(/snippet must be 1-100 characters/i);
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.title}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
+                });
+              });
+          });
+      });
+
+      it("should show error and not post a blog if blog post attempt was made with snippet input consisting solely of empty characters", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const newBlog = {
+          title: "faulty blog",
+          snippet: "    ",
           body: "faulty blog",
         };
         agent
@@ -222,6 +272,31 @@ describe("App", () => {
           title: "faulty blog",
           snippet: "faulty blog",
           body: "",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                res.text.should.match(/body must be 1-2000 characters/i);
+                return agent.get("/blogs").end((err, res) => {
+                  const faultyBlog = new RegExp(`${newBlog.title}`);
+                  res.text.should.not.match(faultyBlog);
+                  done();
+                });
+              });
+          });
+      });
+
+      it("should show error and not post a blog if blog post attempt was made with body input consisting solely of empty characters", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const newBlog = {
+          title: "faulty blog",
+          snippet: "faulty blog",
+          body: "    ",
         };
         agent
           .post(`/user/login`)
@@ -277,9 +352,9 @@ describe("App", () => {
       it("should post a blog that should show on 'all blogs' view given that the input is valid", (done) => {
         const user = testUsersArray[testUsersArray.length - 1];
         const newBlog = {
-          title: "new blog title",
-          snippet: "new blog snippet",
-          body: "new blog body",
+          title: "new blog title 1",
+          snippet: "new blog snippet 1",
+          body: "new blog body 1",
         };
         agent
           .post(`/user/login`)
@@ -293,6 +368,40 @@ describe("App", () => {
                   const blogPosted = new RegExp(`${newBlog.title}`);
                   res.text.should.match(blogPosted);
                   done();
+                });
+              });
+          });
+      });
+
+      it("should trim all input values before storing them into database", (done) => {
+        const user = testUsersArray[testUsersArray.length - 1];
+        const newBlog = {
+          title: "   new blog title 2  ",
+          snippet: "  new blog snippet 2  ",
+          body: "  new blog body 2  ",
+        };
+        agent
+          .post(`/user/login`)
+          .send({ email: user.email, password: testUserPassword })
+          .end((err, res) => {
+            return agent
+              .post("/blogs")
+              .send(newBlog)
+              .end((err, res) => {
+                return agent.get("/blogs").end((err, res) => {
+                  res.text.should.not.include(newBlog.title);
+                  res.text.should.include(newBlog.title.trim());
+                  res.text.should.not.include(newBlog.snippet);
+                  res.text.should.include(newBlog.snippet.trim());
+                  const blogId = res.text
+                    .split("new blog title 2")[0]
+                    .split("single")[1]
+                    .slice(15, 39);
+                  return agent.get(`/blogs/${blogId}`).end((err, res) => {
+                    res.text.should.not.include(newBlog.body);
+                    res.text.should.include(newBlog.body.trim());
+                    done();
+                  });
                 });
               });
           });
@@ -553,6 +662,21 @@ describe("App", () => {
           .end((err, res) => {
             expect(res).to.redirectTo(/signup/i);
             res.text.should.match(/not strong enough/i);
+            done();
+          });
+      });
+
+      it("should render error element if the password contains spaces", (done) => {
+        const input = {
+          email: "daredev@mail.yu",
+          password: "a b c ",
+        };
+        agent
+          .post(`/user/signup`)
+          .send(input)
+          .end((err, res) => {
+            expect(res).to.redirectTo(/signup/i);
+            res.text.should.match(/must not contain spaces/i);
             done();
           });
       });
