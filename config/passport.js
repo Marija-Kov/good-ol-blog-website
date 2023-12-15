@@ -3,22 +3,7 @@ import { verifyPassword } from "../utils/passwordUtils.js";
 import * as passportLocal from "passport-local";
 import { wss } from "../app.js";
 const LocalStrategy = passportLocal.Strategy;
-
-let User;
-
-if (process.env.NODE_ENV !== "test") {
-  import("../config/database.js")
-    .then((db) => {
-      User = db.default.User;
-    })
-    .catch((error) => console.log(error));
-} else {
-  import("../config/test/database.js")
-    .then((db) => {
-      User = db.default.User;
-    })
-    .catch((error) => console.log(error));
-}
+import User from "../data-access-layer/userRepository.js"
 
 const customFields = {
   usernameField: "email",
@@ -36,7 +21,7 @@ const verifyCallback = async (req, email, password, done) => {
     return done(null, false);
   }
   try {
-    const user = await User.findOne({ email: email });
+    const user = await User.findByEmail(email);
     if (!user) {
       req.flash("error", "⚠Please enter email you have signed up with");
       return done(null, false);

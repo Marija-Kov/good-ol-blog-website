@@ -1,21 +1,7 @@
 import passport from "passport";
 import { genPassword } from "../utils/passwordUtils.js";
 import { wss } from "../app.js";
-let User;
-
-if (process.env.NODE_ENV !== "test") {
-  import("../config/database.js")
-    .then((db) => {
-      User = db.default.User;
-    })
-    .catch((error) => console.log(error));
-} else {
-  import("../config/test/database.js")
-    .then((db) => {
-      User = db.default.User;
-    })
-    .catch((error) => console.log(error));
-}
+import User from "../data-access-layer/userRepository.js"
 
 const user_signup = async (req, res, next) => {
   const email = req.body.email;
@@ -31,7 +17,7 @@ const user_signup = async (req, res, next) => {
     req.flash("error", "⚠Email too long, 32 characters max");
     return res.status(400).redirect("/signup");
   }
-  const emailExistsInDb = await User.findOne({ email: email });
+  const emailExistsInDb = await User.findByEmail(email);
   if (emailExistsInDb) {
     req.flash("error", "⚠Email already in use");
     return res.status(400).redirect("/signup");
@@ -50,11 +36,11 @@ const user_signup = async (req, res, next) => {
     process.env.NODE_ENV !== "test"
       ? process.env.MAX_USERS_LIMIT
       : process.env.TEST_MAX_USERS_LIMIT;
-  User.find()
+  User.findAll()
     .then((users) => {
       if (users.length >= maxUsers) {
         const id = users[0]._id;
-        User.findByIdAndDelete(id)
+        User.delete(id)
           .then((result) => {
             res.status(200);
             wss.clients.forEach((client) => {
@@ -74,12 +60,7 @@ const user_signup = async (req, res, next) => {
 
   try {
     const { salt, hash } = await genPassword(req.body.password);
-    const newUser = new User({
-      email: email,
-      hash: hash,
-      salt: salt,
-    });
-    newUser.save();
+    await User.create(email, hash, salt);
     wss.clients.forEach((client) => {
       client.send(`👤 New user signed up ${email}`);
     });

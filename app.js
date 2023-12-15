@@ -2,26 +2,23 @@ import dotenv from "dotenv";
 dotenv.config();
 import express from "express";
 import mongoose from "mongoose";
-import DB from "./config/database.js";
 import blogRoutes from "./routes/blogRoutes.js";
 import userRoutes from "./routes/userRoutes.js";
 import expressEjsLayouts from "express-ejs-layouts";
 import { api_user_limiter, api_blogs_limiter } from "./config/rateLimiters.js";
 import passport from "passport";
-import session from "express-session";
-import connectMongo from "connect-mongo";
 import flash from "connect-flash";
 import morgan from "morgan";
 import fs from "fs";
 import http from "http";
 import https from "https";
+import createSession from "./config/sessionStore.js"
 import { WebSocketServer } from "ws";
 import routeCache from "./routeCache.js";
 const cache = routeCache.middleware;
 
 mongoose.set("strictQuery", false);
 const app = express();
-const MongoStore = connectMongo(session);
 
 app.use(express.json());
 app.set("view engine", "ejs");
@@ -33,22 +30,8 @@ app.use(flash());
 if (process.env.NODE_ENV === "development") {
   app.use(morgan("dev"));
 }
-
-const sessionStore = new MongoStore({
-  mongooseConnection: DB.connection,
-  collection: "sessions",
-});
-
-app.use(
-  session({
-    secret: process.env.SECRET,
-    resave: false,
-    saveUninitialized: false,
-    store: sessionStore,
-    unset: "destroy",
-    cookie: { maxAge: 360000 },
-  })
-);
+const session = await createSession();
+app.use(session);
 
 import("./config/passport.js");
 
