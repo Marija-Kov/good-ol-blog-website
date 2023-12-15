@@ -55,10 +55,13 @@ const blog_create_get = (req, res) => {
 
 const blog_create_post = (req, res) => {
   const { title, snippet, body } = req.body;
+  const titleTrim = title.trim();
+  const snippetTrim = snippet.trim();
+  const bodyTrim = body.trim();
   if (!res.locals.user) {
     return res.status(400).redirect("/blogs/create");
   }
-  if (!title || title.length > 50) {
+  if (!titleTrim || titleTrim.length > 50) {
     return res.status(400).render("blogs/create", {
       title: "create",
       draft: {
@@ -69,7 +72,7 @@ const blog_create_post = (req, res) => {
       error: { title: "⚠Title must be 1-50 characters long" },
     });
   }
-  if (!snippet || snippet.length > 100) {
+  if (!snippetTrim || snippetTrim.length > 100) {
     return res.status(400).render("blogs/create", {
       title: "create",
       draft: {
@@ -80,7 +83,7 @@ const blog_create_post = (req, res) => {
       error: { snippet: "⚠Snippet must be 1-100 characters long" },
     });
   }
-  if (!body || body.length > 2000) {
+  if (!bodyTrim || bodyTrim.length > 2000) {
     return res.status(400).render("blogs/create", {
       title: "create",
       draft: {
@@ -114,8 +117,8 @@ const blog_create_post = (req, res) => {
     .catch((error) => {
       res.status(400).json({ error: error.message });
     });
-
-  Blog.create(req.body)
+  const input = { title: titleTrim, snippet: snippetTrim, body: bodyTrim };
+  Blog.create(input)
     .then((blog) => {
       res.status(200).redirect("/blogs");
       wss.clients.forEach((client) => {
@@ -168,7 +171,10 @@ const blog_update_patch = (req, res) => {
   }
   const id = req.params.id;
   const { title, snippet, body } = req.body;
-  if (!title || title.length > 50) {
+  const titleTrim = title.trim();
+  const snippetTrim = snippet.trim();
+  const bodyTrim = body.trim();
+  if (!titleTrim || titleTrim.length > 50) {
     return res.status(400).render(`blogs/update`, {
       title: "Update Blog",
       blog: {
@@ -180,7 +186,7 @@ const blog_update_patch = (req, res) => {
       error: { title: "⚠Title must be 1-50 characters long" },
     });
   }
-  if (!snippet || snippet.length > 100) {
+  if (!snippetTrim || snippetTrim.length > 100) {
     return res.status(400).render(`blogs/update`, {
       title: "Update Blog",
       blog: {
@@ -192,7 +198,7 @@ const blog_update_patch = (req, res) => {
       error: { snippet: "⚠Snippet must be 1-100 characters long" },
     });
   }
-  if (!body || body.length > 2000) {
+  if (!bodyTrim || bodyTrim.length > 2000) {
     return res.status(400).render(`blogs/update`, {
       title: "Update Blog",
       blog: {
@@ -204,8 +210,8 @@ const blog_update_patch = (req, res) => {
       error: { body: "⚠Body must be 1-2000 characters long" },
     });
   }
-
-  Blog.update(id, req.body)
+  const input = { title: titleTrim, snippet: snippetTrim, body: bodyTrim };
+  Blog.update(id, input)
     .then((blog) => {
       res.status(200).redirect(`/blogs/${id}`);
       wss.clients.forEach((client) => {

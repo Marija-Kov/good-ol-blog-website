@@ -27,6 +27,10 @@ const user_signup = async (req, res, next) => {
     req.flash("error", "⚠Password not strong enough");
     return res.status(400).redirect("/signup");
   }
+  if(!password.match(/^[^\s]+$/)) {
+    req.flash("error", "⚠Password must not contain spaces");
+    return res.status(400).redirect("/signup");
+  }
   if (password.length > 32) {
     req.flash("error", "⚠Password too long, 32 characters max");
     return res.status(400).redirect("/signup");
