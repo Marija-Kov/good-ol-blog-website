@@ -6,13 +6,19 @@
     <p>
       <%= blog.body %>
     </p>
-    <% if(user){ %>
-      <div class="blog-details-buttons">
-        <form class="delete" action="/blogs/delete/<%= blog._id %>" method="GET">
-          <button id="delete">delete</button>
-        </form>
-        <a id="edit" data-doc="<%= blog._id %>" href="/blogs/update/<%= blog._id %>">edit</a>
-      </div>
-      <%}%>
   </div>
+  <% if(user && !blog.isOpen){ %>
+    <div class="blog-details-buttons">
+      <form class="delete" action="/blogs/delete/<%= blog._id %>" method="GET">
+        <button id="delete">delete</button>
+      </form>
+      <a id="edit" data-doc="<%= blog._id %>" href="/blogs/update/<%= blog._id %>">edit</a>
+    </div>
+  <% } else if(user && blog.isOpen){ %>
+    <p>Note:</p>
+    <p>Blog edit in progress. Please come later if you want to contribute.</p>
+  <% } else if(!user){ %>
+    <p>-----------</p>
+    <p>Log in to contribute.</p>
+  <% } %>
 </div>

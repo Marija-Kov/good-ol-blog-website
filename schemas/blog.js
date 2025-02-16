@@ -18,6 +18,10 @@ const blogSchema = new Schema(
       required: [true, "⚠Blog body is required"],
       maxlength: [2000, "⚠Max allowed length is 2000 characters"],
     },
+    isOpen: {
+      type: Boolean,
+      default: false
+    }
   },
   { timestamps: true }
 );

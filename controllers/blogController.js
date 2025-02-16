@@ -30,19 +30,40 @@ const blog_load_more = (req, res) => {
 
 const blog_details = (req, res) => {
   const id = req.params.id;
-  Blog.find(id)
-    .then((result) => {
-      if (!result) {
-        res.status(404).render("404", { title: "Page Not Found" });
-      } else {
-        res
-          .status(200)
-          .render("blogs/details", { blog: result, title: "Blog Details" });
-      }
+  if (req.query && Object.keys(req.query)[0] == 'discardChanges') {
+    // Make the blog open for editing after discarding changes
+    Blog.update(id, { isOpen: false })
+    .then(() => {
+      Blog.find(id)
+      .then((result) => {
+        if (!result) {
+          res.status(404).render("404", { title: "Page Not Found" });
+        } else {
+          res
+            .status(200)
+            .render("blogs/details", { blog: result, title: "Blog Details" });
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+
     })
-    .catch((error) => {
-      console.log(error.message);
-    });
+  } else {
+    Blog.find(id)
+      .then((result) => {
+        if (!result) {
+          res.status(404).render("404", { title: "Page Not Found" });
+        } else {
+          res
+            .status(200)
+            .render("blogs/details", { blog: result, title: "Blog Details" });
+        }
+      })
+      .catch((error) => {
+        console.log(error.message);
+      });
+  }
 };
 
 const blog_create_get = (req, res) => {
@@ -154,9 +175,18 @@ const blog_update_get = (req, res) => {
   const id = req.params.id;
   Blog.find(id)
     .then((result) => {
-      res
-        .status(200)
-        .render("blogs/update", { blog: result, title: "Update Blog" });
+      if (!result.isOpen) {
+        Blog.update(id, { isOpen: true })
+        .then((result) => {
+          res
+            .status(200)
+            .render("blogs/update", { blog: result, title: "Update Blog" });
+        })
+      } else {
+        res
+          .status(200)
+          .render("blogs/update", { blog: result, title: "Update Blog" });
+      }
     })
     .catch((error) => {
       res
@@ -210,7 +240,7 @@ const blog_update_patch = (req, res) => {
       error: { body: "⚠Body must be 1-2000 characters long" },
     });
   }
-  const input = { title: titleTrim, snippet: snippetTrim, body: bodyTrim };
+  const input = { title: titleTrim, snippet: snippetTrim, body: bodyTrim, isOpen: false };
   Blog.update(id, input)
     .then((blog) => {
       res.status(200).redirect(`/blogs/${id}`);
