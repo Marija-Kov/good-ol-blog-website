@@ -2,7 +2,7 @@ import { wss } from "../app.js";
 import Blog from "../data-access-layer/blogRepository.js";
 
 const blog_index = (req, res) => {
-  Blog.findOnPage(1)
+  Blog.find({page: 1})
     .then((result) => {
       res.status(200).render("blogs/index", {
         title: "All Blogs",
@@ -18,7 +18,7 @@ const blog_index = (req, res) => {
 
 const blog_load_more = (req, res) => {
   const nextPage = req.body.currentPage + 1;
-  Blog.findOnPage(nextPage)
+  Blog.find({page: nextPage})
     .then((result) => {
       res.status(200).json({ blogs: result, currentPage: nextPage });
     })
@@ -34,7 +34,7 @@ const blog_details = (req, res) => {
     // Make the blog open for editing after discarding changes
     Blog.update(id, { isOpen: false })
     .then(() => {
-      Blog.find(id)
+      Blog.find({id})
       .then((result) => {
         if (!result) {
           res.status(404).render("404", { title: "Page Not Found" });
@@ -50,7 +50,7 @@ const blog_details = (req, res) => {
 
     })
   } else {
-    Blog.find(id)
+    Blog.find({ id })
       .then((result) => {
         if (!result) {
           res.status(404).render("404", { title: "Page Not Found" });
@@ -119,7 +119,7 @@ const blog_create_post = (req, res) => {
     process.env.NODE_ENV !== "test"
       ? process.env.MAX_BLOGS_LIMIT
       : process.env.TEST_MAX_BLOGS_LIMIT;
-  Blog.findAll()
+  Blog.find()
     .then((blogs) => {
       if (blogs.length >= maxBlogs) {
         const id = blogs[0]._id;
@@ -173,7 +173,7 @@ const blog_update_get = (req, res) => {
     return res.status(400).redirect("/blogs/create");
   }
   const id = req.params.id;
-  Blog.find(id)
+  Blog.find({ id })
     .then((result) => {
       if (!result.isOpen) {
         Blog.update(id, { isOpen: true })

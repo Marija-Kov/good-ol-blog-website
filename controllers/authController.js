@@ -17,7 +17,7 @@ const user_signup = async (req, res, next) => {
     req.flash("error", "⚠Email too long, 32 characters max");
     return res.status(400).redirect("/signup");
   }
-  const emailExistsInDb = await User.findByEmail(email);
+  const emailExistsInDb = await User.find({ email });
   if (emailExistsInDb) {
     req.flash("error", "⚠Email already in use");
     return res.status(400).redirect("/signup");
@@ -40,7 +40,7 @@ const user_signup = async (req, res, next) => {
     process.env.NODE_ENV !== "test"
       ? process.env.MAX_USERS_LIMIT
       : process.env.TEST_MAX_USERS_LIMIT;
-  User.findAll()
+  User.find()
     .then((users) => {
       if (users.length >= maxUsers) {
         const id = users[0]._id;

@@ -18,15 +18,22 @@ if (process.env.NODE_ENV !== "test") {
 const limit = process.env.PER_PAGE_LIMIT;
 
 class BlogRepository {
-  async findAll() {
-    return Blog.find();
-  }
-  async findOnPage(page) {
-    const offset = (page - 1) * limit;
-    return Blog.find().sort({ createdAt: -1 }).limit(limit).skip(offset);
-  }
-  async find(id) {
-    return Blog.findById(id);
+
+  async find(params) {
+    if (!params) {
+      return Blog.find();
+    } else if (params.page && !params.id) {
+      const offset = (params.page - 1) * limit;
+      return Blog.find().sort({ createdAt: -1 }).limit(limit).skip(offset);
+    } else if (params.id && !params.page) {
+      return Blog.findById(params.id);
+    } else {
+      console.error(`BlogRepository: ERROR: Bad Parameters. Valid parameters:
+        1. { id: yourId } (get a specific entry)
+        2. { page: yourPage } (get all entries on page)
+        3. null/undefined  (get all entries)
+        `)
+    }
   }
   async create(blogData) {
     const blog = new Blog(blogData);

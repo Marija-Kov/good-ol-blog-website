@@ -21,7 +21,7 @@ const verifyCallback = async (req, email, password, done) => {
     return done(null, false);
   }
   try {
-    const user = await User.findByEmail(email);
+    const user = await User.find({ email });
     if (!user) {
       req.flash("error", "⚠Please enter email you have signed up with");
       return done(null, false);
@@ -51,7 +51,7 @@ passport.serializeUser((user, done) => {
 
 passport.deserializeUser(async (userId, done) => {
   try {
-    const user = await User.findById(userId);
+    const user = await User.find({ id: userId });
     done(null, user);
   } catch (error) {
     done(error);

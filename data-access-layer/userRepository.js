@@ -15,18 +15,25 @@ if (process.env.NODE_ENV !== "test") {
 }
 
 class UserRepository {
-  async findAll() {
-    return User.find();
-  }
+
   async create(email, hash, salt) {
     const user = new User({ email, hash, salt });
     return user.save();
   }
-  async findById(id) {
-    return User.findById(id);
-  }
-  async findByEmail(email) {
-    return User.findOne({ email });
+  async find(params) {
+    if (!params) {
+      return User.find();
+    } else if (params.email && !params.id) {
+      return User.findOne({ email: params.email });
+    } else if (params.id && !params.email) {
+      return User.findById(id);
+    } else {
+      console.error(`UserRepository: ERROR: Bad Parameters. Valid parameters:
+        1. { id: yourId } (get an entry by id)
+        2. { email: yourEmail } (get an entry by email)
+        3. null/undefined  (get all entries)
+        `)
+    }
   }
   async delete(id) {
     return User.findByIdAndDelete(id);
