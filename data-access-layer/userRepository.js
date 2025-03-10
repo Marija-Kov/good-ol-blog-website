@@ -26,7 +26,7 @@ class UserRepository {
     } else if (params.email && !params.id) {
       return User.findOne({ email: params.email });
     } else if (params.id && !params.email) {
-      return User.findById(id);
+      return User.findById(params.id);
     } else {
       console.error(`UserRepository: ERROR: Bad Parameters. Valid parameters:
         1. { id: yourId } (get an entry by id)
