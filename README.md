@@ -1,6 +1,6 @@
 <h1 align="center"><a href ="https://keech-writes-things.onrender.com">Keech Writes Things</a></h1>
 <h3 align="center">
-‼️📣ATTENTION: This app may take a couple of minutes to load due to <a href = "https://render.com/docs/free#spinning-down-on-idle">the limitations of Render's Free web service</a>. 
+📣 ATTENTION: This app may take a minute to load due to <a href = "https://render.com/docs/free#spinning-down-on-idle">the limitations of Render's Free web service</a>. 
  Thank you for your patience❣️
 </h3>
 <br>
@@ -15,8 +15,8 @@
 2. [Local Usage](#localUsage)
 3. [Tools and Dependencies](#tools)
 4. [Environment variables](#environment-variables)
-5. [Todos](#todos)
-6. [Author](#author)
+5. [Author](#author)
+6. [Who is Keech?](#keech)
 
 
 ---
@@ -118,16 +118,12 @@ API_BLOGS_WINDOW_MS=<br>
 TEST_API_BLOGS_WINDOW_MS=<br>
 <br>
 
-## Todos <a name = "todos"></a>
-- The enabled state of the live update feature should, ideally, persist in between rendering of different pages;
-- Develop a solution to communicate free web service limits to users within the app;
-- Test live update feature;
-- Test client-side logic;
-- Blog chunks should be showing in consistent style. As is, the first chunk to load on scroll appears not to be animated;
-- Minify CSS;
-
-<br>
-
 ## Author <a name = "author"></a>
 
 [@marija-kov](https://github.com/Marija-Kov) 
+
+<br>
+
+## Who is Keech? <a name = "keech"></a>
+
+<img src="https://i.imgur.com/FbiC89o.jpeg" alt="a black dog lying on a dark red couch looking at the camera over her shoulder" width="400"/>
