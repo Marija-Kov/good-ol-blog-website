@@ -4,10 +4,7 @@ import userSchema from "../schemas/user.js";
 import dotenv from "dotenv";
 dotenv.config();
 
-const connection = mongoose.createConnection(process.env.MONGO_URI, {
-  useNewUrlParser: true,
-  useUnifiedTopology: true,
-});
+const connection = mongoose.createConnection(process.env.MONGO_URI);
 
 const User = connection.model("User", userSchema);
 const Blog = connection.model("Blog", blogSchema);
